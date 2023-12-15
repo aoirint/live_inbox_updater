@@ -1,18 +1,30 @@
+import os
 from argparse import ArgumentParser
 
-from .niconico_api.user_broadcast_history_api import (
-    fetch_user_broadcast_history_string_by_niconico_user_id,
-    parse_user_broadcast_history_string,
-)
+from dotenv import load_dotenv
+
+from .live_inbox_hasura_api.niconico_user_api import fetch_enabled_niconico_users
 
 
 def main() -> None:
+    load_dotenv()
+
+    live_inbox_hasura_url = os.environ.get("LIVE_INBOX_HASURA_URL") or None
+    live_inbox_hasura_token = os.environ.get("LIVE_INBOX_HASURA_TOKEN") or None
+
     parser = ArgumentParser()
 
     parser.add_argument(
-        "--niconico_user_id",
+        "--live_inbox_hasura_url",
         type=str,
-        required=True,
+        default=live_inbox_hasura_url,
+        required=live_inbox_hasura_url is None,
+    )
+    parser.add_argument(
+        "--live_inbox_hasura_token",
+        type=str,
+        default=live_inbox_hasura_token,
+        required=live_inbox_hasura_token is None,
     )
     parser.add_argument(
         "--useragent",
@@ -22,20 +34,14 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    niconico_user_id: str = args.niconico_user_id
+    live_inbox_hasura_url: str = args.live_inbox_hasura_url
+    live_inbox_hasura_token: str = args.live_inbox_hasura_token
     useragent: str = args.useragent
 
-    user_broadcast_history_string = (
-        fetch_user_broadcast_history_string_by_niconico_user_id(
-            niconico_user_id=niconico_user_id,
+    print(
+        fetch_enabled_niconico_users(
+            hasura_url=live_inbox_hasura_url,
+            hasura_token=live_inbox_hasura_token,
             useragent=useragent,
-            offset=0,
-            limit=10,
-            with_total_count=True,
-        )
+        ),
     )
-    user_broadcast_history = parse_user_broadcast_history_string(
-        string=user_broadcast_history_string,
-    )
-
-    print(user_broadcast_history)
