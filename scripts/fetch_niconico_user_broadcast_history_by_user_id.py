@@ -39,3 +39,7 @@ def main() -> None:
     )
 
     print(user_broadcast_history)
+
+
+if __name__ == "__main__":
+    main()
