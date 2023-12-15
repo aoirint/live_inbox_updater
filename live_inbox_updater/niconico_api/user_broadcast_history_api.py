@@ -68,11 +68,11 @@ class UserBroadcastHistoryProgramThumbnail(BaseModel):
 
 class UserBroadcastHistoryProgramItem(BaseModel):
     id: UserBroadcastHistoryProgramId
-    linkedContent: UserBroadcastHistoryProgramLinkedContent
     program: UserBroadcastHistoryProgram
     programProvider: UserBroadcastHistoryProgramProvider
     socialGroup: UserBroadcastHistoryProgramSocialGroup
     thumbnail: UserBroadcastHistoryProgramThumbnail
+    linkedContent: UserBroadcastHistoryProgramLinkedContent | None = None
 
 
 class UserBroadcastHistoryData(BaseModel):
