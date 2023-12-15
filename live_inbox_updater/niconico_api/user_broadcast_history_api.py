@@ -1,6 +1,3 @@
-from dataclasses import dataclass
-from typing import Any
-
 import httpx
 from pydantic import BaseModel
 
@@ -128,7 +125,7 @@ def fetch_user_broadcast_history_string_by_niconico_user_id(
     limit: int = 100,
     with_total_count: bool = True,
 ) -> str:
-    return parse_user_broadcast_history_string(
+    return fetch_user_broadcast_history_string(
         provider_type="user",
         provider_id=str(niconico_user_id),
         useragent=useragent,
