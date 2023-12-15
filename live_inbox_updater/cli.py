@@ -1,7 +1,8 @@
 from argparse import ArgumentParser
 
 from .niconico_api.user_broadcast_history_api import (
-    fetch_user_broadcast_history_by_niconico_user_id,
+    fetch_user_broadcast_history_string_by_niconico_user_id,
+    parse_user_broadcast_history_string,
 )
 
 
@@ -24,8 +25,8 @@ def main() -> None:
     niconico_user_id: str = args.niconico_user_id
     useragent: str = args.useragent
 
-    print(
-        fetch_user_broadcast_history_by_niconico_user_id(
+    user_broadcast_history_string = (
+        fetch_user_broadcast_history_string_by_niconico_user_id(
             niconico_user_id=niconico_user_id,
             useragent=useragent,
             offset=0,
@@ -33,3 +34,8 @@ def main() -> None:
             with_total_count=True,
         )
     )
+    user_broadcast_history = parse_user_broadcast_history_string(
+        string=user_broadcast_history_string,
+    )
+
+    print(user_broadcast_history)

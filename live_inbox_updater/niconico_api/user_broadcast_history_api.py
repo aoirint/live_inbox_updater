@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+from typing import Any
+
 import httpx
 from pydantic import BaseModel
 
@@ -86,7 +89,7 @@ class UserBroadcastHistory(BaseModel):
     data: UserBroadcastHistoryData
 
 
-def fetch_user_broadcast_history(
+def fetch_user_broadcast_history_string(
     provider_type: str,
     provider_id: str,
     useragent: str,
@@ -94,7 +97,7 @@ def fetch_user_broadcast_history(
     offset: int = 0,
     limit: int = 100,
     with_total_count: bool = True,
-) -> UserBroadcastHistory:
+) -> str:
     api_url = "https://live.nicovideo.jp/front/api/v1/user-broadcast-history"
     params = {
         "providerType": provider_type,
@@ -114,18 +117,18 @@ def fetch_user_broadcast_history(
     )
     res.raise_for_status()
 
-    return UserBroadcastHistory.model_validate(res.json())
+    return res.text
 
 
-def fetch_user_broadcast_history_by_niconico_user_id(
+def fetch_user_broadcast_history_string_by_niconico_user_id(
     niconico_user_id: str | int,
     useragent: str,
     is_include_non_public: bool = False,
     offset: int = 0,
     limit: int = 100,
     with_total_count: bool = True,
-) -> UserBroadcastHistory:
-    return fetch_user_broadcast_history(
+) -> str:
+    return parse_user_broadcast_history_string(
         provider_type="user",
         provider_id=str(niconico_user_id),
         useragent=useragent,
@@ -134,3 +137,9 @@ def fetch_user_broadcast_history_by_niconico_user_id(
         limit=limit,
         with_total_count=with_total_count,
     )
+
+
+def parse_user_broadcast_history_string(
+    string: str,
+) -> UserBroadcastHistory:
+    return UserBroadcastHistory.model_validate_json(string)
