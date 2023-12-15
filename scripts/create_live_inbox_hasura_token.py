@@ -1,10 +1,10 @@
 import time
-
+from getpass import getpass
 import jwt
 
 
 def main() -> None:
-    secret_key = input("HS256 secret key: ")
+    secret_key = getpass("HS256 secret key: ")
 
     iat = int(time.time())
     exp = 2524608000  # 2050-01-01T00:00:00+00:00
