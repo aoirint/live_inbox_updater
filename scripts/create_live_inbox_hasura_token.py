@@ -1,5 +1,6 @@
 import time
 from getpass import getpass
+
 import jwt
 
 
@@ -13,9 +14,11 @@ def main() -> None:
         "sub": "bb22706e-0ad4-4dae-8ac8-ac8b75b63048",
         "iat": iat,
         "exp": exp,
-        "x-hasura-default-role": "live_inbox_updater",
-        "x-hasura-allowed-roles": ["live_inbox_updater"],
-        "x-hasura-user-id": "bb22706e-0ad4-4dae-8ac8-ac8b75b63048",
+        "https://hasura.io/jwt/claims": {
+            "x-hasura-default-role": "live_inbox_updater",
+            "x-hasura-allowed-roles": ["live_inbox_updater"],
+            "x-hasura-user-id": "bb22706e-0ad4-4dae-8ac8-ac8b75b63048",
+        },
     }
 
     print(
