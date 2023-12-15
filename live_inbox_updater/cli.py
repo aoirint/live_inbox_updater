@@ -97,13 +97,15 @@ def main() -> None:
             start_time: datetime | None = None
             if program_item.program.schedule.beginTime is not None:
                 start_time = datetime.fromtimestamp(
-                    program_item.program.schedule.beginTime.seconds, tz=timezone.utc
+                    program_item.program.schedule.beginTime.seconds,
+                    tz=timezone.utc,
                 )
 
             end_time: datetime | None = None
             if program_item.program.schedule.endTime is not None:
                 end_time = datetime.fromtimestamp(
-                    program_item.program.schedule.endTime.seconds, tz=timezone.utc
+                    program_item.program.schedule.endTime.seconds,
+                    tz=timezone.utc,
                 )
 
             start_time_string = start_time.isoformat() if start_time is not None else ""
