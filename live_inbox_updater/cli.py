@@ -9,22 +9,22 @@ from .live_inbox_hasura_api.niconico_user_api import fetch_enabled_niconico_user
 def main() -> None:
     load_dotenv()
 
-    live_inbox_hasura_url = os.environ.get("LIVE_INBOX_HASURA_URL") or None
-    live_inbox_hasura_token = os.environ.get("LIVE_INBOX_HASURA_TOKEN") or None
+    default_live_inbox_hasura_url = os.environ.get("LIVE_INBOX_HASURA_URL") or None
+    default_live_inbox_hasura_token = os.environ.get("LIVE_INBOX_HASURA_TOKEN") or None
 
     parser = ArgumentParser()
 
     parser.add_argument(
         "--live_inbox_hasura_url",
         type=str,
-        default=live_inbox_hasura_url,
-        required=live_inbox_hasura_url is None,
+        default=default_live_inbox_hasura_url,
+        required=default_live_inbox_hasura_url is None,
     )
     parser.add_argument(
         "--live_inbox_hasura_token",
         type=str,
-        default=live_inbox_hasura_token,
-        required=live_inbox_hasura_token is None,
+        default=default_live_inbox_hasura_token,
+        required=default_live_inbox_hasura_token is None,
     )
     parser.add_argument(
         "--useragent",
