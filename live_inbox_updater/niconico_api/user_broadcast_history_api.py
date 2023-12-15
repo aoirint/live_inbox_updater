@@ -63,7 +63,7 @@ class UserBroadcastHistoryProgramThumbnailScreenshot(BaseModel):
 
 
 class UserBroadcastHistoryProgramThumbnail(BaseModel):
-    screenshot: UserBroadcastHistoryProgramThumbnailScreenshot
+    screenshot: UserBroadcastHistoryProgramThumbnailScreenshot | None = None
 
 
 class UserBroadcastHistoryProgramItem(BaseModel):
