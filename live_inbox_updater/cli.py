@@ -24,10 +24,12 @@ def main() -> None:
     niconico_user_id: str = args.niconico_user_id
     useragent: str = args.useragent
 
-    fetch_user_broadcast_history_by_niconico_user_id(
-        niconico_user_id=niconico_user_id,
-        useragent=useragent,
-        offset=0,
-        limit=10,
-        with_total_count=True,
+    print(
+        fetch_user_broadcast_history_by_niconico_user_id(
+            niconico_user_id=niconico_user_id,
+            useragent=useragent,
+            offset=0,
+            limit=10,
+            with_total_count=True,
+        )
     )
