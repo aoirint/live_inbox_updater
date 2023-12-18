@@ -5,7 +5,10 @@ from urllib.parse import urljoin
 import httpx
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
-from .base import NiconicoLiveProgramManager, NiconicoLiveProgramUpsertObject
+from .base import (
+    LiveInboxApiNiconicoLiveProgramManager,
+    LiveInboxApiNiconicoLiveProgramUpsertObject,
+)
 
 logger = getLogger(__name__)
 
@@ -22,7 +25,9 @@ class UpsertNiconicoLiveProgramsResponseBody(BaseModel):
     data: UpsertNiconicoLiveProgramsResponseData
 
 
-class NiconicoLiveProgramHasuraManager(NiconicoLiveProgramManager):
+class LiveInboxApiNiconicoLiveProgramHasuraManager(
+    LiveInboxApiNiconicoLiveProgramManager
+):
     def __init__(
         self,
         hasura_url: str,
@@ -35,7 +40,7 @@ class NiconicoLiveProgramHasuraManager(NiconicoLiveProgramManager):
 
     def upsert_all(
         self,
-        upsert_objects: Iterable[NiconicoLiveProgramUpsertObject],
+        upsert_objects: Iterable[LiveInboxApiNiconicoLiveProgramUpsertObject],
     ) -> None:
         hasura_url = self.hasura_url
         hasura_token = self.hasura_token
@@ -68,7 +73,7 @@ mutation UpsertNiconicoLivePrograms(
 """,
             "variables": {
                 "niconico_live_program_upsert_objects": TypeAdapter(
-                    list[NiconicoLiveProgramUpsertObject]
+                    list[LiveInboxApiNiconicoLiveProgramUpsertObject]
                 ).dump_python(
                     list(upsert_objects),
                     mode="json",

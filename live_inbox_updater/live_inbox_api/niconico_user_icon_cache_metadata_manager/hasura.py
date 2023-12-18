@@ -6,7 +6,10 @@ from urllib.parse import urljoin
 import httpx
 from pydantic import BaseModel, ValidationError
 
-from .base import NiconicoUserIconCacheMetadata, NiconicoUserIconCacheMetadataManager
+from .base import (
+    LiveInboxApiNiconicoUserIconCacheMetadata,
+    LiveInboxApiNiconicoUserIconCacheMetadataManager,
+)
 
 logger = getLogger(__name__)
 
@@ -58,7 +61,9 @@ class InsertNiconicoUserIconCacheResponseBody(BaseModel):
     data: InsertNiconicoUserIconCacheResponseData
 
 
-class NiconicoUserIconCacheMetadataHasuraManager(NiconicoUserIconCacheMetadataManager):
+class LiveInboxApiNiconicoUserIconCacheMetadataHasuraManager(
+    LiveInboxApiNiconicoUserIconCacheMetadataManager
+):
     def __init__(
         self,
         hasura_url: str,
@@ -72,7 +77,7 @@ class NiconicoUserIconCacheMetadataHasuraManager(NiconicoUserIconCacheMetadataMa
     def get_by_urls(
         self,
         urls: Iterable[str],
-    ) -> list[NiconicoUserIconCacheMetadata]:
+    ) -> list[LiveInboxApiNiconicoUserIconCacheMetadata]:
         hasura_url = self.hasura_url
         hasura_token = self.hasura_token
         useragent = self.useragent
@@ -130,10 +135,12 @@ query GetNiconicoUserIconCacheByUrls(
             f"Fetched {len(hasura_niconico_user_icon_caches)} niconico_user_icon_caches"
         )
 
-        niconico_user_icon_cache_metadatas: list[NiconicoUserIconCacheMetadata] = []
+        niconico_user_icon_cache_metadatas: list[
+            LiveInboxApiNiconicoUserIconCacheMetadata
+        ] = []
         for hasura_niconico_user_icon_cache in hasura_niconico_user_icon_caches:
             niconico_user_icon_cache_metadatas.append(
-                NiconicoUserIconCacheMetadata(
+                LiveInboxApiNiconicoUserIconCacheMetadata(
                     url=hasura_niconico_user_icon_cache.url,
                     fetched_at=hasura_niconico_user_icon_cache.fetched_at,
                     file_size=hasura_niconico_user_icon_cache.file_size,

@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 import httpx
 from pydantic import BaseModel, ValidationError
 
-from .base import NiconicoUser, NiconicoUserManager
+from .base import LiveInboxApiNiconicoUser, LiveInboxApiNiconicoUserManager
 
 logger = getLogger(__name__)
 
@@ -25,7 +25,7 @@ class GetNiconicoUsersResponseBody(BaseModel):
     data: GetNiconicoUsersResponseData
 
 
-class NiconicoUserHasuraManager(NiconicoUserManager):
+class NiconicoUserHasuraManager(LiveInboxApiNiconicoUserManager):
     def __init__(
         self,
         hasura_url: str,
@@ -38,7 +38,7 @@ class NiconicoUserHasuraManager(NiconicoUserManager):
 
     def get_all(
         self,
-    ) -> list[NiconicoUser]:
+    ) -> list[LiveInboxApiNiconicoUser]:
         hasura_url = self.hasura_url
         hasura_token = self.hasura_token
         useragent = self.useragent
@@ -81,10 +81,10 @@ query GetNiconicoUsers {
         hasura_niconico_users = response_body.data.niconico_users
         logger.info(f"Fetched {len(hasura_niconico_users)} niconico users")
 
-        niconico_users: list[NiconicoUser] = []
+        niconico_users: list[LiveInboxApiNiconicoUser] = []
         for hasura_niconico_user in hasura_niconico_users:
             niconico_users.append(
-                NiconicoUser(
+                LiveInboxApiNiconicoUser(
                     remote_niconico_user_id=hasura_niconico_user.remote_niconico_user_id,
                     name=hasura_niconico_user.name,
                     enabled=hasura_niconico_user.enabled,

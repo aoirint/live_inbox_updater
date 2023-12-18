@@ -2,10 +2,10 @@ from urllib.parse import urlparse
 
 import httpx
 
-from .base import NiconicoUserIcon, NiconicoUserIconClient
+from .base import NiconicoApiNiconicoUserIcon, NiconicoApiNiconicoUserIconClient
 
 
-class NiconicoUserIconNiconicoClient(NiconicoUserIconClient):
+class NiconicoApiNiconicoUserIconNiconicoClient(NiconicoApiNiconicoUserIconClient):
     def __init__(
         self,
         useragent: str,
@@ -27,7 +27,7 @@ class NiconicoUserIconNiconicoClient(NiconicoUserIconClient):
     def get(
         self,
         url: str,
-    ) -> NiconicoUserIcon:
+    ) -> NiconicoApiNiconicoUserIcon:
         useragent = self.useragent
 
         self.__validate_url(url=url)
@@ -46,7 +46,7 @@ class NiconicoUserIconNiconicoClient(NiconicoUserIconClient):
 
         content = res.content
 
-        return NiconicoUserIcon(
+        return NiconicoApiNiconicoUserIcon(
             url=url,
             content_type=content_type,
             content=content,
