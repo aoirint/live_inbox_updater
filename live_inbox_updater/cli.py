@@ -105,79 +105,11 @@ def fetch_uncached_niconico_user_icons(
     logger.info(f"Fetched {len(uncached_icon_urls)} niconico user icons")
 
 
-def main() -> None:
-    load_dotenv()
-
-    default_live_inbox_hasura_url = os.environ.get("LIVE_INBOX_HASURA_URL") or None
-    default_live_inbox_hasura_token = os.environ.get("LIVE_INBOX_HASURA_TOKEN") or None
-    default_niconico_user_icon_dir = (
-        os.environ.get("APP_NICONICO_USER_ICON_DIR") or None
-    )
-
-    parser = ArgumentParser()
-
-    parser.add_argument(
-        "--live_inbox_hasura_url",
-        type=str,
-        default=default_live_inbox_hasura_url,
-        required=default_live_inbox_hasura_url is None,
-    )
-    parser.add_argument(
-        "--live_inbox_hasura_token",
-        type=str,
-        default=default_live_inbox_hasura_token,
-        required=default_live_inbox_hasura_token is None,
-    )
-    parser.add_argument(
-        "--niconico_user_icon_dir",
-        type=Path,
-        default=default_niconico_user_icon_dir,
-        required=default_niconico_user_icon_dir is None,
-    )
-    parser.add_argument(
-        "--useragent",
-        type=str,
-        default="LiveInboxBot/0.0.0",
-    )
-
-    args = parser.parse_args()
-
-    live_inbox_hasura_url: str = args.live_inbox_hasura_url
-    live_inbox_hasura_token: str = args.live_inbox_hasura_token
-    niconico_user_icon_dir: Path = args.niconico_user_icon_dir
-    useragent: str = args.useragent
-
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s : %(message)s",
-    )
-
-    niconico_user_manager = NiconicoUserHasuraManager(
-        hasura_url=live_inbox_hasura_url,
-        hasura_token=live_inbox_hasura_token,
-        useragent=useragent,
-    )
-    niconico_user_icon_client = NiconicoUserIconNiconicoClient(
-        useragent=useragent,
-    )
-    niconico_user_icon_cache_metadata_manager = (
-        NiconicoUserIconCacheMetadataHasuraManager(
-            hasura_url=live_inbox_hasura_url,
-            hasura_token=live_inbox_hasura_token,
-            useragent=useragent,
-        )
-    )
-    niconico_user_icon_cache_storage_manager = NiconicoUserIconCacheStorageFileManager(
-        niconico_user_icon_dir=niconico_user_icon_dir,
-    )
-
-    fetch_uncached_niconico_user_icons(
-        niconico_user_manager=niconico_user_manager,
-        niconico_user_icon_client=niconico_user_icon_client,
-        niconico_user_icon_cache_storage_manager=niconico_user_icon_cache_storage_manager,
-        niconico_user_icon_cache_metadata_manager=niconico_user_icon_cache_metadata_manager,
-    )
-
+def update_niconico_broadcast_programs(
+    live_inbox_hasura_url: str,
+    live_inbox_hasura_token: str,
+    useragent: str,
+) -> None:
     niconico_users = fetch_enabled_niconico_users(
         hasura_url=live_inbox_hasura_url,
         hasura_token=live_inbox_hasura_token,
@@ -256,3 +188,83 @@ def main() -> None:
         )
 
         time.sleep(1)
+
+
+def main() -> None:
+    load_dotenv()
+
+    default_live_inbox_hasura_url = os.environ.get("LIVE_INBOX_HASURA_URL") or None
+    default_live_inbox_hasura_token = os.environ.get("LIVE_INBOX_HASURA_TOKEN") or None
+    default_niconico_user_icon_dir = (
+        os.environ.get("APP_NICONICO_USER_ICON_DIR") or None
+    )
+
+    parser = ArgumentParser()
+
+    parser.add_argument(
+        "--live_inbox_hasura_url",
+        type=str,
+        default=default_live_inbox_hasura_url,
+        required=default_live_inbox_hasura_url is None,
+    )
+    parser.add_argument(
+        "--live_inbox_hasura_token",
+        type=str,
+        default=default_live_inbox_hasura_token,
+        required=default_live_inbox_hasura_token is None,
+    )
+    parser.add_argument(
+        "--niconico_user_icon_dir",
+        type=Path,
+        default=default_niconico_user_icon_dir,
+        required=default_niconico_user_icon_dir is None,
+    )
+    parser.add_argument(
+        "--useragent",
+        type=str,
+        default="LiveInboxBot/0.0.0",
+    )
+
+    args = parser.parse_args()
+
+    live_inbox_hasura_url: str = args.live_inbox_hasura_url
+    live_inbox_hasura_token: str = args.live_inbox_hasura_token
+    niconico_user_icon_dir: Path = args.niconico_user_icon_dir
+    useragent: str = args.useragent
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s : %(message)s",
+    )
+
+    niconico_user_manager = NiconicoUserHasuraManager(
+        hasura_url=live_inbox_hasura_url,
+        hasura_token=live_inbox_hasura_token,
+        useragent=useragent,
+    )
+    niconico_user_icon_client = NiconicoUserIconNiconicoClient(
+        useragent=useragent,
+    )
+    niconico_user_icon_cache_metadata_manager = (
+        NiconicoUserIconCacheMetadataHasuraManager(
+            hasura_url=live_inbox_hasura_url,
+            hasura_token=live_inbox_hasura_token,
+            useragent=useragent,
+        )
+    )
+    niconico_user_icon_cache_storage_manager = NiconicoUserIconCacheStorageFileManager(
+        niconico_user_icon_dir=niconico_user_icon_dir,
+    )
+
+    fetch_uncached_niconico_user_icons(
+        niconico_user_manager=niconico_user_manager,
+        niconico_user_icon_client=niconico_user_icon_client,
+        niconico_user_icon_cache_storage_manager=niconico_user_icon_cache_storage_manager,
+        niconico_user_icon_cache_metadata_manager=niconico_user_icon_cache_metadata_manager,
+    )
+
+    update_niconico_broadcast_programs(
+        live_inbox_hasura_url=live_inbox_hasura_url,
+        live_inbox_hasura_token=live_inbox_hasura_token,
+        useragent=useragent,
+    )
