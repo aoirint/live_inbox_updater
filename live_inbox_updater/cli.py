@@ -105,7 +105,7 @@ def fetch_uncached_niconico_user_icons(
     logger.info(f"Fetched {len(uncached_icon_urls)} niconico user icons")
 
 
-def update_niconico_broadcast_programs(
+def update_niconico_live_programs(
     niconico_user_manager: NiconicoUserManager,
     niconico_user_broadcast_history_client: NiconicoUserBroadcastHistoryClient,
     niconico_live_program_manager: NiconicoLiveProgramManager,
@@ -246,7 +246,7 @@ def main() -> None:
         niconico_user_icon_cache_metadata_manager=niconico_user_icon_cache_metadata_manager,
     )
 
-    update_niconico_broadcast_programs(
+    update_niconico_live_programs(
         niconico_user_manager=niconico_user_manager,
         niconico_user_broadcast_history_client=niconico_user_broadcast_history_client,
         niconico_live_program_manager=niconico_live_program_manager,
