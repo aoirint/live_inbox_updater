@@ -1,24 +1,6 @@
-from abc import ABC, abstractmethod
 from pathlib import Path
 
-
-class NiconicoUserIconCacheStorageManager(ABC):
-    @abstractmethod
-    def check_exists(
-        self,
-        file_key: str,
-        content_type: str,
-    ) -> bool:
-        ...
-
-    @abstractmethod
-    def save(
-        self,
-        file_key: str,
-        content_type: str,
-        content: bytes,
-    ) -> None:
-        ...
+from .base import NiconicoUserIconCacheStorageManager
 
 
 class NiconicoUserIconCacheStorageFileManager(NiconicoUserIconCacheStorageManager):
