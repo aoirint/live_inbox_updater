@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Iterable
 
 from pydantic import BaseModel
 
@@ -10,9 +11,21 @@ class LiveInboxApiNiconicoUser(BaseModel):
     icon_url: str | None
 
 
+class LiveInboxApiNiconicoUserEnabledUpdateObject(BaseModel):
+    remote_niconico_user_id: str
+    enabled: bool
+
+
 class LiveInboxApiNiconicoUserManager(ABC):
     @abstractmethod
     def get_all(
         self,
     ) -> list[LiveInboxApiNiconicoUser]:
+        ...
+
+    @abstractmethod
+    def bulk_update_user_enabled(
+        self,
+        update_objects: Iterable[LiveInboxApiNiconicoUserEnabledUpdateObject],
+    ) -> None:
         ...

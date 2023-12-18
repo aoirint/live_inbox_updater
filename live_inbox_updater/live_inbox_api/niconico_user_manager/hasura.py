@@ -1,10 +1,15 @@
 from logging import getLogger
+from typing import Iterable
 from urllib.parse import urljoin
 
 import httpx
 from pydantic import BaseModel, ValidationError
 
-from .base import LiveInboxApiNiconicoUser, LiveInboxApiNiconicoUserManager
+from .base import (
+    LiveInboxApiNiconicoUser,
+    LiveInboxApiNiconicoUserEnabledUpdateObject,
+    LiveInboxApiNiconicoUserManager,
+)
 
 logger = getLogger(__name__)
 
@@ -23,6 +28,18 @@ class GetNiconicoUsersResponseData(BaseModel):
 
 class GetNiconicoUsersResponseBody(BaseModel):
     data: GetNiconicoUsersResponseData
+
+
+class BulkUpdateNiconicoUserEnabledResponseUpdateNiconicoUsersMany(BaseModel):
+    affected_rows: int
+
+
+class BulkUpdateNiconicoUserEnabledResponseData(BaseModel):
+    update_niconico_users_many: BulkUpdateNiconicoUserEnabledResponseUpdateNiconicoUsersMany
+
+
+class BulkUpdateNiconicoUserEnabledResponseBody(BaseModel):
+    data: BulkUpdateNiconicoUserEnabledResponseData
 
 
 class NiconicoUserHasuraManager(LiveInboxApiNiconicoUserManager):
@@ -93,3 +110,65 @@ query GetNiconicoUsers {
             )
 
         return niconico_users
+
+    def bulk_update_user_enabled(
+        self,
+        update_objects: Iterable[LiveInboxApiNiconicoUserEnabledUpdateObject],
+    ) -> None:
+        hasura_url = self.hasura_url
+        hasura_token = self.hasura_token
+        useragent = self.useragent
+
+        hasura_api_url = urljoin(hasura_url, "v1/graphql")
+
+        updates: list[dict] = []
+        for update_object in update_objects:
+            updates.append(
+                {
+                    "_set": {
+                        "enabled": update_object.enabled,
+                    },
+                    "_where": {
+                        "remote_niconico_user_id": {
+                            "_eq": update_object.remote_niconico_user_id,
+                        },
+                    },
+                },
+            )
+
+        payload = {
+            "query": """
+mutation BulkUpdateNiconicoUserEnabled(
+  $updates: [niconico_users_updates!]!
+) {
+  update_niconico_users_many(updates: $updates) {
+    affected_rows
+  }
+}
+""",
+            "variables": {
+                "updates": updates,
+            },
+        }
+
+        res = httpx.post(
+            url=hasura_api_url,
+            headers={
+                "Authorization": f"Bearer {hasura_token}",
+                "User-Agent": useragent,
+            },
+            json=payload,
+        )
+        res.raise_for_status()
+
+        response_body_json = res.json()
+        try:
+            response_body = BulkUpdateNiconicoUserEnabledResponseBody.model_validate(
+                response_body_json
+            )
+        except ValidationError:
+            logger.error(response_body_json)
+            raise
+
+        affected_rows = response_body.data.update_niconico_users_many.affected_rows
+        logger.info(f"Bulk updated {len(affected_rows)} niconico user enabled")
