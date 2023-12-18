@@ -5,9 +5,33 @@ from urllib.parse import urljoin
 import httpx
 from pydantic import BaseModel, ValidationError
 
-from .base import NiconicoUserIconCacheMetadataManager
+from .base import NiconicoUserIconCacheMetadata, NiconicoUserIconCacheMetadataManager
 
 logger = getLogger(__name__)
+
+
+class GetNiconicoUserIconCacheByUrlsRequestVariables(BaseModel):
+    urls: list[str]
+
+
+class GetNiconicoUserIconCacheByUrlsResponseNiconicoUserIconCache(BaseModel):
+    id: str
+    url: str
+    fetched_at: datetime
+    file_size: int
+    hash_md5: str
+    content_type: str
+    file_key: str
+
+
+class GetNiconicoUserIconCacheByUrlsResponseData(BaseModel):
+    niconico_user_icon_caches: (
+        list[GetNiconicoUserIconCacheByUrlsResponseNiconicoUserIconCache]
+    )
+
+
+class GetNiconicoUserIconCacheByUrlsResponseBody(BaseModel):
+    data: GetNiconicoUserIconCacheByUrlsResponseData
 
 
 class InsertNiconicoUserIconRequestVariables(BaseModel):
@@ -43,6 +67,82 @@ class NiconicoUserIconCacheMetadataHasuraManager(NiconicoUserIconCacheMetadataMa
         self.hasura_url = hasura_url
         self.hasura_token = hasura_token
         self.useragent = useragent
+
+    def get_by_urls(
+        self,
+        urls: list[str],
+    ) -> list[NiconicoUserIconCacheMetadata]:
+        hasura_url = self.hasura_url
+        hasura_token = self.hasura_token
+        useragent = self.useragent
+
+        hasura_api_url = urljoin(hasura_url, "v1/graphql")
+
+        payload = {
+            "query": """
+query GetNiconicoUserIconCacheByUrls(
+  $urls: [String!]!
+) {
+  niconico_user_icon_caches(
+    where: {
+      url: {
+        _in: $urls
+      }
+    }
+  ) {
+    id
+    url
+    fetched_at
+    file_size
+    hash_md5
+    content_type
+    file_key
+  }
+}
+""",
+            "variables": GetNiconicoUserIconCacheByUrlsRequestVariables(
+                urls=urls,
+            ).model_dump(mode="json"),
+        }
+
+        res = httpx.post(
+            url=hasura_api_url,
+            headers={
+                "Authorization": f"Bearer {hasura_token}",
+                "User-Agent": useragent,
+            },
+            json=payload,
+        )
+        res.raise_for_status()
+
+        response_body_json = res.json()
+        try:
+            response_body = GetNiconicoUserIconCacheByUrlsResponseBody.model_validate(
+                response_body_json
+            )
+        except ValidationError:
+            logger.error(response_body_json)
+            raise
+
+        hasura_niconico_user_icon_caches = response_body.data.niconico_user_icon_caches
+        logger.info(
+            f"Fetched {len(hasura_niconico_user_icon_caches)} niconico_user_icon_caches"
+        )
+
+        niconico_user_icon_cache_metadatas: list[NiconicoUserIconCacheMetadata] = []
+        for hasura_niconico_user_icon_cache in hasura_niconico_user_icon_caches:
+            niconico_user_icon_cache_metadatas.append(
+                NiconicoUserIconCacheMetadata(
+                    url=hasura_niconico_user_icon_cache.url,
+                    fetched_at=hasura_niconico_user_icon_cache.fetched_at,
+                    file_size=hasura_niconico_user_icon_cache.file_size,
+                    hash_md5=hasura_niconico_user_icon_cache.hash_md5,
+                    content_type=hasura_niconico_user_icon_cache.content_type,
+                    file_key=hasura_niconico_user_icon_cache.file_key,
+                ),
+            )
+
+        return niconico_user_icon_cache_metadatas
 
     def save(
         self,
