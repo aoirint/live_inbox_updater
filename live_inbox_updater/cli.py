@@ -144,7 +144,7 @@ def update_niconico_broadcast_programs(
             upsert_objects.append(
                 NiconicoLiveProgramUpsertObject(
                     remote_niconico_content_id=program.niconico_content_id,
-                    niconico_user_id=program.niconico_user_id,
+                    remote_niconico_user_id=program.niconico_user_id,
                     title=program.title,
                     status=program.status,
                     last_fetch_time=fetch_time,

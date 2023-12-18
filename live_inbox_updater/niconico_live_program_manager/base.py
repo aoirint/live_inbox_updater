@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 class NiconicoLiveProgramUpsertObject(BaseModel):
     remote_niconico_content_id: str
-    niconico_user_id: str
+    remote_niconico_user_id: str
     title: str
     status: str
     last_fetch_time: datetime

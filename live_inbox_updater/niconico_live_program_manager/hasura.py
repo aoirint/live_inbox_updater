@@ -53,7 +53,7 @@ mutation UpsertNiconicoLivePrograms(
         on_conflict: {
             constraint: niconico_live_programs_remote_niconico_content_id_key,
             update_columns: [
-                niconico_user_id
+                remote_niconico_user_id
                 title
                 status
                 last_fetch_time
