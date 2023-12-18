@@ -79,7 +79,7 @@ query GetNiconicoUsers {
             raise
 
         hasura_niconico_users = response_body.data.niconico_users
-        logger.info(f"Fetched niconico_users[count={len(hasura_niconico_users)}]")
+        logger.info(f"Fetched {len(hasura_niconico_users)} niconico users")
 
         niconico_users: list[NiconicoUser] = []
         for hasura_niconico_user in hasura_niconico_users:
