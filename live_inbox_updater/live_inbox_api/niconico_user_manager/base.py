@@ -11,6 +11,13 @@ class LiveInboxApiNiconicoUser(BaseModel):
     icon_url: str | None
 
 
+class LiveInboxApiNiconicoUserCreateObject(BaseModel):
+    remote_niconico_user_id: str
+    name: str
+    enabled: bool
+    icon_url: str | None
+
+
 class LiveInboxApiNiconicoUserEnabledUpdateObject(BaseModel):
     remote_niconico_user_id: str
     enabled: bool
@@ -21,6 +28,13 @@ class LiveInboxApiNiconicoUserManager(ABC):
     def get_all(
         self,
     ) -> list[LiveInboxApiNiconicoUser]:
+        ...
+
+    @abstractmethod
+    def create_users(
+        self,
+        create_objects: Iterable[LiveInboxApiNiconicoUserCreateObject],
+    ) -> None:
         ...
 
     @abstractmethod
