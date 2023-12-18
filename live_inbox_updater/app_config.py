@@ -13,7 +13,7 @@ class AppConfig(BaseModel):
     useragent: str
 
 
-def load_app_config_from_env():
+def load_app_config_from_env() -> AppConfig:
     live_inbox_hasura_url = os.environ.get("LIVE_INBOX_HASURA_URL") or None
     live_inbox_hasura_token = os.environ.get("LIVE_INBOX_HASURA_TOKEN") or None
     niconico_user_icon_dir_string = os.environ.get("APP_NICONICO_USER_ICON_DIR") or None

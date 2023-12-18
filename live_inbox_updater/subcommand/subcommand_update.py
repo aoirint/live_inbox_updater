@@ -169,7 +169,7 @@ class SubcommandUpdateArguments(BaseModel):
     useragent: str
 
 
-def subcommand_update(args: SubcommandUpdateArguments):
+def subcommand_update(args: SubcommandUpdateArguments) -> None:
     live_inbox_hasura_url = args.live_inbox_hasura_url
     live_inbox_hasura_token = args.live_inbox_hasura_token
     niconico_user_icon_dir = args.niconico_user_icon_dir
@@ -227,7 +227,7 @@ def subcommand_update(args: SubcommandUpdateArguments):
 
 def execute_subcommand_update(
     args: Namespace,
-):
+) -> None:
     live_inbox_hasura_url: str = args.live_inbox_hasura_url
     live_inbox_hasura_token: str = args.live_inbox_hasura_token
     niconico_user_icon_dir: Path = args.niconico_user_icon_dir
@@ -246,7 +246,7 @@ def execute_subcommand_update(
 def add_arguments_subcommand_update(
     parser: ArgumentParser,
     app_config: AppConfig,
-):
+) -> None:
     parser.add_argument(
         "--live_inbox_hasura_url",
         type=str,
