@@ -35,7 +35,9 @@ class BulkUpdateNiconicoUserEnabledResponseUpdateNiconicoUsersMany(BaseModel):
 
 
 class BulkUpdateNiconicoUserEnabledResponseData(BaseModel):
-    update_niconico_users_many: BulkUpdateNiconicoUserEnabledResponseUpdateNiconicoUsersMany
+    update_niconico_users_many: list[
+        BulkUpdateNiconicoUserEnabledResponseUpdateNiconicoUsersMany
+    ]
 
 
 class BulkUpdateNiconicoUserEnabledResponseBody(BaseModel):
@@ -128,7 +130,7 @@ query GetNiconicoUsers {
                     "_set": {
                         "enabled": update_object.enabled,
                     },
-                    "_where": {
+                    "where": {
                         "remote_niconico_user_id": {
                             "_eq": update_object.remote_niconico_user_id,
                         },
@@ -170,5 +172,10 @@ mutation BulkUpdateNiconicoUserEnabled(
             logger.error(response_body_json)
             raise
 
-        affected_rows = response_body.data.update_niconico_users_many.affected_rows
-        logger.info(f"Bulk updated {len(affected_rows)} niconico user enabled")
+        affected_rows = 0
+        for (
+            update_niconico_users_many_item
+        ) in response_body.data.update_niconico_users_many:
+            affected_rows += update_niconico_users_many_item.affected_rows
+
+        logger.info(f"Bulk updated {affected_rows} niconico user enabled/disabled")
