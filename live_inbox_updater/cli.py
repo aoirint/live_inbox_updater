@@ -108,6 +108,8 @@ def fetch_uncached_niconico_user_icons(
             file_key=file_key,
         )
 
+        time.sleep(1)
+
     logger.info(f"Fetched {len(uncached_icon_urls)} niconico user icons")
 
 
