@@ -14,19 +14,11 @@ from .live_inbox_hasura_api.niconico_live_program_api import (
     NiconicoLiveProgramUpsertObject,
     upsert_niconico_live_programs,
 )
-from .live_inbox_hasura_api.niconico_user_api import (
-    fetch_enabled_niconico_users,
-    fetch_uncached_icon_niconico_users,
-)
-from .live_inbox_hasura_api.niconico_user_icon_api import (
-    InsertNiconicoUserIconRequestVariables,
-    insert_niconico_user_icon_cache,
-)
+from .live_inbox_hasura_api.niconico_user_api import fetch_enabled_niconico_users
 from .niconico_api.user_broadcast_history_api import (
     fetch_user_broadcast_history_string_by_niconico_user_id,
     parse_user_broadcast_history_string,
 )
-from .niconico_api.user_icon_api import fetch_niconico_user_icon
 from .niconico_user_icon_cache_metadata_manager import (
     NiconicoUserIconCacheMetadataHasuraManager,
     NiconicoUserIconCacheMetadataManager,
