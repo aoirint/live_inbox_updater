@@ -27,6 +27,7 @@ from .niconico_api.user_broadcast_history_api import (
     fetch_user_broadcast_history_string_by_niconico_user_id,
     parse_user_broadcast_history_string,
 )
+from .niconico_api.user_icon_api import fetch_niconico_user_icon
 
 logger = getLogger(__name__)
 
@@ -77,28 +78,21 @@ def fetch_uncached_niconico_user_icons(
     for niconico_user in uncached_icon_niconico_users:
         file_key = str(uuid.uuid4())
         fetched_at = datetime.now(tz=timezone.utc)
-
         icon_url = niconico_user.icon_url
-        res = httpx.get(
-            icon_url,
-            headers={
-                "User-Agent": useragent,
-            },
-        )
-        res.raise_for_status()
 
-        content_type = res.headers.get("Content-Type")
-        if content_type is None:
-            raise Exception("Invalid response: No Content-Type response header")
+        niconico_user_icon = fetch_niconico_user_icon(
+            icon_url=icon_url,
+            useragent=useragent,
+        )
 
         icon_path = create_niconico_user_icon_path(
             niconico_user_icon_dir=niconico_user_icon_dir,
             file_key=file_key,
-            content_type=content_type,
+            content_type=niconico_user_icon.content_type,
         )
         icon_path.parent.mkdir(parents=True, exist_ok=True)
 
-        content = res.content
+        content = niconico_user_icon.content
         icon_path.write_bytes(content)
 
         file_size = len(content)
@@ -110,7 +104,7 @@ def fetch_uncached_niconico_user_icons(
                 fetched_at=fetched_at,
                 file_size=file_size,
                 hash_md5=hash_md5,
-                content_type=content_type,
+                content_type=niconico_user_icon.content_type,
                 file_key=file_key,
             ),
             hasura_url=live_inbox_hasura_url,
