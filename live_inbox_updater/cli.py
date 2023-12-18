@@ -73,7 +73,7 @@ def fetch_uncached_niconico_user_icons(
     )
     cached_icon_urls: set[str] = set()
     for icon_cache_metadata in icon_cache_metadatas:
-        cached_icon_urls.add(icon_cache_metadata)
+        cached_icon_urls.add(icon_cache_metadata.url)
 
     # TODO: 取得済みのユーザアイコンが消滅していないか確認
 
