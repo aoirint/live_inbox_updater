@@ -47,6 +47,7 @@ class NiconicoUserIconNiconicoClient(NiconicoUserIconClient):
         content = res.content
 
         return NiconicoUserIcon(
+            url=url,
             content_type=content_type,
             content=content,
         )
