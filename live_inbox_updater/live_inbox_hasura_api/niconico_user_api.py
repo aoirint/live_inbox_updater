@@ -7,13 +7,18 @@ from pydantic import BaseModel, ValidationError
 logger = getLogger(__name__)
 
 
-class NiconicoUser(BaseModel):
+class GetEnabledNiconicoUserResponseNiconicoUserNiconicoUserIconCache(BaseModel):
+    id: str
+
+
+class GetEnabledNiconicoUserResponseNiconicoUser(BaseModel):
     id: str
     remote_niconico_user_id: str
+    niconico_user_icon_cache: GetEnabledNiconicoUserResponseNiconicoUserNiconicoUserIconCache | None
 
 
 class GetEnabledNiconicoUserResponseData(BaseModel):
-    niconico_users: list[NiconicoUser]
+    niconico_users: list[GetEnabledNiconicoUserResponseNiconicoUser]
 
 
 class GetEnabledNiconicoUserResponseBody(BaseModel):
@@ -24,7 +29,7 @@ def fetch_enabled_niconico_users(
     hasura_url: str,
     hasura_token: str,
     useragent: str,
-) -> list[NiconicoUser]:
+) -> list[GetEnabledNiconicoUserResponseNiconicoUser]:
     hasura_api_url = urljoin(hasura_url, "v1/graphql")
 
     payload = {
@@ -33,6 +38,9 @@ query GetEnabledNiconicoUsers {
   niconico_users(where: {enabled: {_eq: true}}) {
     id
     remote_niconico_user_id
+    niconico_user_icon_cache {
+      id
+    }
   }
 }
 """,
