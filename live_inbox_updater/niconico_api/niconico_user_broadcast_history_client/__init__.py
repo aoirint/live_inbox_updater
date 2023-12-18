@@ -1,8 +1,11 @@
-from .base import NiconicoUserBroadcastHistoryClient, NiconicoUserBroadcastProgram
-from .niconico import NiconicoUserBroadcastHistoryNiconicoClient
+from .base import (
+    NiconicoApiNiconicoUserBroadcastHistoryClient,
+    NiconicoApiNiconicoUserBroadcastProgram,
+)
+from .niconico import NiconicoApiNiconicoUserBroadcastHistoryNiconicoClient
 
 __all__ = [
-    "NiconicoUserBroadcastProgram",
-    "NiconicoUserBroadcastHistoryClient",
-    "NiconicoUserBroadcastHistoryNiconicoClient",
+    "NiconicoApiNiconicoUserBroadcastProgram",
+    "NiconicoApiNiconicoUserBroadcastHistoryClient",
+    "NiconicoApiNiconicoUserBroadcastHistoryNiconicoClient",
 ]

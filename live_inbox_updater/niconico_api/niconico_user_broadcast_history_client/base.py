@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class NiconicoUserBroadcastProgram(BaseModel):
+class NiconicoApiNiconicoUserBroadcastProgram(BaseModel):
     niconico_content_id: str
     title: str
     description: str
@@ -14,12 +14,12 @@ class NiconicoUserBroadcastProgram(BaseModel):
     end_time: datetime | None
 
 
-class NiconicoUserBroadcastHistoryClient(ABC):
+class NiconicoApiNiconicoUserBroadcastHistoryClient(ABC):
     @abstractmethod
     def get_programs(
         self,
         niconico_user_id: str,
         offset: int = 0,
         limit: int = 10,
-    ) -> list[NiconicoUserBroadcastProgram]:
+    ) -> list[NiconicoApiNiconicoUserBroadcastProgram]:
         ...

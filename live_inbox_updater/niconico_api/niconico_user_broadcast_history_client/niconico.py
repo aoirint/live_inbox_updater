@@ -4,7 +4,10 @@ from logging import getLogger
 import httpx
 from pydantic import BaseModel, ValidationError
 
-from .base import NiconicoUserBroadcastHistoryClient, NiconicoUserBroadcastProgram
+from .base import (
+    NiconicoApiNiconicoUserBroadcastHistoryClient,
+    NiconicoApiNiconicoUserBroadcastProgram,
+)
 
 logger = getLogger(__name__)
 
@@ -93,7 +96,9 @@ class UserBroadcastHistoryResponseBody(BaseModel):
     data: UserBroadcastHistoryResponseData
 
 
-class NiconicoUserBroadcastHistoryNiconicoClient(NiconicoUserBroadcastHistoryClient):
+class NiconicoApiNiconicoUserBroadcastHistoryNiconicoClient(
+    NiconicoApiNiconicoUserBroadcastHistoryClient
+):
     def __init__(
         self,
         useragent: str,
@@ -105,7 +110,7 @@ class NiconicoUserBroadcastHistoryNiconicoClient(NiconicoUserBroadcastHistoryCli
         niconico_user_id: str,
         offset: int = 0,
         limit: int = 10,
-    ) -> list[NiconicoUserBroadcastProgram]:
+    ) -> list[NiconicoApiNiconicoUserBroadcastProgram]:
         useragent = self.useragent
 
         api_url = "https://live.nicovideo.jp/front/api/v1/user-broadcast-history"
@@ -136,7 +141,9 @@ class NiconicoUserBroadcastHistoryNiconicoClient(NiconicoUserBroadcastHistoryCli
             logger.error(response_body_json)
             raise
 
-        niconico_user_broadcast_programs: list[NiconicoUserBroadcastProgram] = []
+        niconico_user_broadcast_programs: list[
+            NiconicoApiNiconicoUserBroadcastProgram
+        ] = []
         for program_item in response_body.data.programsList:
             niconico_content_id = program_item.id.value
             title = program_item.program.title
@@ -159,7 +166,7 @@ class NiconicoUserBroadcastHistoryNiconicoClient(NiconicoUserBroadcastHistoryCli
                 )
 
             niconico_user_broadcast_programs.append(
-                NiconicoUserBroadcastProgram(
+                NiconicoApiNiconicoUserBroadcastProgram(
                     niconico_content_id=niconico_content_id,
                     title=title,
                     description=description,

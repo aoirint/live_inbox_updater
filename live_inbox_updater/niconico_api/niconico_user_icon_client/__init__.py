@@ -1,8 +1,8 @@
-from .base import NiconicoUserIcon, NiconicoUserIconClient
-from .niconico import NiconicoUserIconNiconicoClient
+from .base import NiconicoApiNiconicoUserIcon, NiconicoApiNiconicoUserIconClient
+from .niconico import NiconicoApiNiconicoUserIconNiconicoClient
 
 __all__ = [
-    "NiconicoUserIcon",
-    "NiconicoUserIconClient",
-    "NiconicoUserIconNiconicoClient",
+    "NiconicoApiNiconicoUserIcon",
+    "NiconicoApiNiconicoUserIconClient",
+    "NiconicoApiNiconicoUserIconNiconicoClient",
 ]
