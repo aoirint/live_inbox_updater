@@ -14,7 +14,7 @@ class UserApiResponseMeta(BaseModel):
 
 
 class UserIconsUrls(BaseModel):
-    uri150x150 = Field(alias="150x150")
+    uri150x150: str = Field(alias="150x150")
 
 
 class UserIcons(BaseModel):
