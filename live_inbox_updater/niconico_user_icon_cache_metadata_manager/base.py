@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
+from typing import Iterable
 
 from pydantic import BaseModel
 
@@ -17,7 +18,7 @@ class NiconicoUserIconCacheMetadataManager(ABC):
     @abstractmethod
     def get_by_urls(
         self,
-        urls: list[str],
+        urls: Iterable[str],
     ) -> list[NiconicoUserIconCacheMetadata]:
         ...
 

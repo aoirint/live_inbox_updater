@@ -1,5 +1,6 @@
 from datetime import datetime
 from logging import getLogger
+from typing import Iterable
 from urllib.parse import urljoin
 
 import httpx
@@ -70,7 +71,7 @@ class NiconicoUserIconCacheMetadataHasuraManager(NiconicoUserIconCacheMetadataMa
 
     def get_by_urls(
         self,
-        urls: list[str],
+        urls: Iterable[str],
     ) -> list[NiconicoUserIconCacheMetadata]:
         hasura_url = self.hasura_url
         hasura_token = self.hasura_token
@@ -101,7 +102,7 @@ query GetNiconicoUserIconCacheByUrls(
 }
 """,
             "variables": GetNiconicoUserIconCacheByUrlsRequestVariables(
-                urls=urls,
+                urls=list(urls),
             ).model_dump(mode="json"),
         }
 
