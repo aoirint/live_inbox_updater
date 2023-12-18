@@ -100,7 +100,7 @@ class NiconicoUserBroadcastHistoryNiconicoClient(NiconicoUserBroadcastHistoryCli
     ):
         self.useragent = useragent
 
-    def get(
+    def get_programs(
         self,
         niconico_user_id: str,
         offset: int = 0,

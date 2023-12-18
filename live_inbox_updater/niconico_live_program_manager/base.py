@@ -2,8 +2,10 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Iterable
 
+from pydantic import BaseModel
 
-class NiconicoLiveProgramUpsertObject(ABC):
+
+class NiconicoLiveProgramUpsertObject(BaseModel):
     remote_niconico_content_id: str
     niconico_user_id: str
     title: str
