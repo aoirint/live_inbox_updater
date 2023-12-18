@@ -6,10 +6,7 @@ from dotenv import load_dotenv
 
 from . import __VERSION__ as APP_VERSION
 from .app_config import load_app_config_from_env
-from .subcommand.subcommand_update import (
-    add_arguments_subcommand_update,
-    execute_subcommand_update,
-)
+from .subcommand.subcommand_update import add_arguments_subcommand_update
 
 logger = getLogger(__name__)
 
@@ -37,7 +34,6 @@ def main() -> None:
         parser=subparser_update,
         app_config=app_config,
     )
-    subparser_update.set_defaults(handler=execute_subcommand_update)
 
     args = parser.parse_args()
     if hasattr(args, "handler"):

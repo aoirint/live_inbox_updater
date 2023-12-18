@@ -271,3 +271,5 @@ def add_arguments_subcommand_update(
         default=app_config.useragent,
         required=app_config.useragent is None,
     )
+
+    parser.set_defaults(handler=execute_subcommand_update)
