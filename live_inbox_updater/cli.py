@@ -10,14 +10,18 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from .niconico_api.niconico_user_broadcast_history_client import (
+    NiconicoUserBroadcastHistoryClient,
+    NiconicoUserBroadcastHistoryNiconicoClient,
+)
+from .niconico_api.niconico_user_icon_client import (
+    NiconicoUserIconClient,
+    NiconicoUserIconNiconicoClient,
+)
 from .niconico_live_program_manager import (
     NiconicoLiveProgramHasuraManager,
     NiconicoLiveProgramManager,
     NiconicoLiveProgramUpsertObject,
-)
-from .niconico_user_broadcast_history_client import (
-    NiconicoUserBroadcastHistoryClient,
-    NiconicoUserBroadcastHistoryNiconicoClient,
 )
 from .niconico_user_icon_cache_metadata_manager import (
     NiconicoUserIconCacheMetadataHasuraManager,
@@ -26,10 +30,6 @@ from .niconico_user_icon_cache_metadata_manager import (
 from .niconico_user_icon_cache_storage_manager import (
     NiconicoUserIconCacheStorageFileManager,
     NiconicoUserIconCacheStorageManager,
-)
-from .niconico_user_icon_client import (
-    NiconicoUserIconClient,
-    NiconicoUserIconNiconicoClient,
 )
 from .niconico_user_manager import NiconicoUserHasuraManager, NiconicoUserManager
 
