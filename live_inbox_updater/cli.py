@@ -27,91 +27,88 @@ from .niconico_api.user_broadcast_history_api import (
     parse_user_broadcast_history_string,
 )
 from .niconico_api.user_icon_api import fetch_niconico_user_icon
+from .niconico_user_icon_cache_metadata_manager import (
+    NiconicoUserIconCacheMetadataHasuraManager,
+    NiconicoUserIconCacheMetadataManager,
+)
+from .niconico_user_icon_cache_storage_manager import (
+    NiconicoUserIconCacheStorageFileManager,
+    NiconicoUserIconCacheStorageManager,
+)
+from .niconico_user_icon_client import (
+    NiconicoUserIconClient,
+    NiconicoUserIconNiconicoClient,
+)
+from .niconico_user_manager import NiconicoUserHasuraManager, NiconicoUserManager
 
 logger = getLogger(__name__)
 
 
-def create_niconico_user_icon_path(
-    niconico_user_icon_dir: Path,
-    file_key: str,
-    content_type: str,
-) -> Path:
-    suffix: str | None = None
-    if content_type == "image/jpeg":
-        suffix = ".jpg"
-    elif content_type == "image/png":
-        suffix = ".png"
-    elif content_type == "image/gif":
-        suffix = ".gif"
-    else:
-        raise Exception(
-            f"Unsupported content_type: {content_type}",
-        )
-
-    file_name = f"{file_key}{suffix}"
-    return niconico_user_icon_dir / file_name
-
-
 def fetch_uncached_niconico_user_icons(
-    niconico_user_icon_dir: Path,
-    live_inbox_hasura_url: str,
-    live_inbox_hasura_token: str,
-    useragent: str,
+    niconico_user_manager: NiconicoUserManager,
+    niconico_user_icon_client: NiconicoUserIconClient,
+    niconico_user_icon_cache_metadata_manager: NiconicoUserIconCacheMetadataManager,
+    niconico_user_icon_cache_storage_manager: NiconicoUserIconCacheStorageManager,
 ) -> None:
     """
     未取得のユーザアイコンを取得する
     """
-    niconico_user_icon_dir.mkdir(parents=True, exist_ok=True)
 
-    # 各アカウントのアイコンキャッシュ取得状況を確認する
-    uncached_icon_niconico_users = fetch_uncached_icon_niconico_users(
-        hasura_url=live_inbox_hasura_url,
-        hasura_token=live_inbox_hasura_token,
-        useragent=useragent,
+    # ユーザアイコンURLリストを取得
+    niconico_users = niconico_user_manager.get_all()
+    enabled_niconico_users = filter(
+        lambda niconico_user: niconico_user.enabled, niconico_users
     )
 
-    logger.info(
-        f"Found uncached {len(uncached_icon_niconico_users)} niconico user icons"
-    )
+    icon_urls: set[str] = set()
+    for niconico_user in enabled_niconico_users:
+        if niconico_user.icon_url is None:
+            continue
 
-    for niconico_user in uncached_icon_niconico_users:
+        icon_urls.add(niconico_user.icon_url)
+
+    # 取得済みのユーザアイコンURLリストを取得
+    icon_cache_metadatas = niconico_user_icon_cache_metadata_manager.get_by_urls(
+        urls=icon_urls,
+    )
+    cached_icon_urls: set[str] = set()
+    for icon_cache_metadata in icon_cache_metadatas:
+        cached_icon_urls.add(icon_cache_metadata)
+
+    # TODO: 取得済みのユーザアイコンが消滅していないか確認
+
+    # 未取得のユーザアイコンURLリストを作成
+    uncached_icon_urls = icon_urls - cached_icon_urls
+    logger.info(f"Found {len(uncached_icon_urls)} uncached niconico user icons")
+
+    for icon_url in uncached_icon_urls:
         file_key = str(uuid.uuid4())
         fetched_at = datetime.now(tz=timezone.utc)
-        icon_url = niconico_user.icon_url
 
-        niconico_user_icon = fetch_niconico_user_icon(
-            icon_url=icon_url,
-            useragent=useragent,
-        )
+        # ユーザアイコンを取得
+        niconico_user_icon = niconico_user_icon_client.get(url=icon_url)
 
-        icon_path = create_niconico_user_icon_path(
-            niconico_user_icon_dir=niconico_user_icon_dir,
+        # ユーザアイコンを保存
+        niconico_user_icon_cache_storage_manager.save(
             file_key=file_key,
             content_type=niconico_user_icon.content_type,
-        )
-        icon_path.parent.mkdir(parents=True, exist_ok=True)
-
-        content = niconico_user_icon.content
-        icon_path.write_bytes(content)
-
-        file_size = len(content)
-        hash_md5 = hashlib.md5(content).hexdigest()
-
-        insert_niconico_user_icon_cache(
-            obj=InsertNiconicoUserIconRequestVariables(
-                url=icon_url,
-                fetched_at=fetched_at,
-                file_size=file_size,
-                hash_md5=hash_md5,
-                content_type=niconico_user_icon.content_type,
-                file_key=file_key,
-            ),
-            hasura_url=live_inbox_hasura_url,
-            hasura_token=live_inbox_hasura_token,
-            useragent=useragent,
+            content=niconico_user_icon.content,
         )
 
-    logger.info(f"Fetched {len(uncached_icon_niconico_users)} niconico user icons")
+        file_size = len(niconico_user_icon.content)
+        hash_md5 = hashlib.md5(niconico_user_icon.content).hexdigest()
+
+        # ユーザアイコンのメタデータを保存
+        niconico_user_icon_cache_metadata_manager.save(
+            url=icon_url,
+            fetched_at=fetched_at,
+            file_size=file_size,
+            hash_md5=hash_md5,
+            content_type=niconico_user_icon.content_type,
+            file_key=file_key,
+        )
+
+    logger.info(f"Fetched {len(uncached_icon_urls)} niconico user icons")
 
 
 def main() -> None:
@@ -161,11 +158,30 @@ def main() -> None:
         format="%(asctime)s %(levelname)s %(name)s : %(message)s",
     )
 
-    fetch_uncached_niconico_user_icons(
-        niconico_user_icon_dir=niconico_user_icon_dir,
-        live_inbox_hasura_url=live_inbox_hasura_url,
-        live_inbox_hasura_token=live_inbox_hasura_token,
+    niconico_user_manager = NiconicoUserHasuraManager(
+        hasura_url=live_inbox_hasura_url,
+        hasura_token=live_inbox_hasura_token,
         useragent=useragent,
+    )
+    niconico_user_icon_client = NiconicoUserIconNiconicoClient(
+        useragent=useragent,
+    )
+    niconico_user_icon_cache_metadata_manager = (
+        NiconicoUserIconCacheMetadataHasuraManager(
+            hasura_url=live_inbox_hasura_url,
+            hasura_token=live_inbox_hasura_token,
+            useragent=useragent,
+        )
+    )
+    niconico_user_icon_cache_storage_manager = NiconicoUserIconCacheStorageFileManager(
+        niconico_user_icon_dir=niconico_user_icon_dir,
+    )
+
+    fetch_uncached_niconico_user_icons(
+        niconico_user_manager=niconico_user_manager,
+        niconico_user_icon_client=niconico_user_icon_client,
+        niconico_user_icon_cache_storage_manager=niconico_user_icon_cache_storage_manager,
+        niconico_user_icon_cache_metadata_manager=niconico_user_icon_cache_metadata_manager,
     )
 
     niconico_users = fetch_enabled_niconico_users(
