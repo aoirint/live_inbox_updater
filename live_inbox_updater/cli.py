@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 from logging import getLogger
 from pathlib import Path
 
-import httpx
 from dotenv import load_dotenv
 
 from .live_inbox_hasura_api.niconico_live_program_api import (
