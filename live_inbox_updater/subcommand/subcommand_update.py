@@ -161,6 +161,8 @@ def update_niconico_live_programs(
 
         time.sleep(1)
 
+    # TODO: 「取得対象でなかった」かつ「statusがENDEDでない」番組を再取得して、ON_AIRの更新漏れが起きないようにする
+
 
 class SubcommandUpdateArguments(BaseModel):
     live_inbox_hasura_url: str
