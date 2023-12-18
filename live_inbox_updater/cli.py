@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from . import __VERSION__ as APP_VERSION
 from .app_config import load_app_config_from_env
 from .subcommand.subcommand_disable_user import add_arguments_subcommand_disable_user
+from .subcommand.subcommand_enable_user import add_arguments_subcommand_enable_user
 from .subcommand.subcommand_update import add_arguments_subcommand_update
 
 logger = getLogger(__name__)
@@ -39,6 +40,12 @@ def main() -> None:
     subparser_disable_user = subparsers.add_parser("disable_user")
     add_arguments_subcommand_disable_user(
         parser=subparser_disable_user,
+        app_config=app_config,
+    )
+
+    subparser_enable_user = subparsers.add_parser("enable_user")
+    add_arguments_subcommand_enable_user(
+        parser=subparser_enable_user,
         app_config=app_config,
     )
 

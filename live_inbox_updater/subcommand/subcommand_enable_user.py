@@ -13,7 +13,7 @@ from ..live_inbox_api.niconico_user_manager import (
 logger = getLogger(__name__)
 
 
-def disable_users(
+def enable_users(
     remote_niconico_user_ids: list[str],
     niconico_user_manager: LiveInboxApiNiconicoUserManager,
 ) -> None:
@@ -22,7 +22,7 @@ def disable_users(
         update_objects.append(
             LiveInboxApiNiconicoUserEnabledUpdateObject(
                 remote_niconico_user_id=remote_niconico_user_id,
-                enabled=False,
+                enabled=True,
             ),
         )
 
@@ -31,14 +31,14 @@ def disable_users(
     )
 
 
-class SubcommandDisableUserArguments(BaseModel):
+class SubcommandEnableUserArguments(BaseModel):
     remote_niconico_user_ids: list[str]
     live_inbox_hasura_url: str
     live_inbox_hasura_token: str
     useragent: str
 
 
-def subcommand_disable_user(args: SubcommandDisableUserArguments) -> None:
+def subcommand_enable_user(args: SubcommandEnableUserArguments) -> None:
     remote_niconico_user_ids = args.remote_niconico_user_ids
     live_inbox_hasura_url = args.live_inbox_hasura_url
     live_inbox_hasura_token = args.live_inbox_hasura_token
@@ -49,13 +49,14 @@ def subcommand_disable_user(args: SubcommandDisableUserArguments) -> None:
         hasura_token=live_inbox_hasura_token,
         useragent=useragent,
     )
-    disable_users(
+
+    enable_users(
         remote_niconico_user_ids=remote_niconico_user_ids,
         niconico_user_manager=niconico_user_manager,
     )
 
 
-def execute_subcommand_disable_user(
+def execute_subcommand_enable_user(
     args: Namespace,
 ) -> None:
     remote_niconico_user_ids: list[str] = args.remote_niconico_user_ids
@@ -63,8 +64,8 @@ def execute_subcommand_disable_user(
     live_inbox_hasura_token: str = args.live_inbox_hasura_token
     useragent: str = args.useragent
 
-    subcommand_disable_user(
-        args=SubcommandDisableUserArguments(
+    subcommand_enable_user(
+        args=SubcommandEnableUserArguments(
             remote_niconico_user_ids=remote_niconico_user_ids,
             live_inbox_hasura_url=live_inbox_hasura_url,
             live_inbox_hasura_token=live_inbox_hasura_token,
@@ -73,7 +74,7 @@ def execute_subcommand_disable_user(
     )
 
 
-def add_arguments_subcommand_disable_user(
+def add_arguments_subcommand_enable_user(
     parser: ArgumentParser,
     app_config: AppConfig,
 ) -> None:
@@ -103,4 +104,4 @@ def add_arguments_subcommand_disable_user(
         required=app_config.useragent is None,
     )
 
-    parser.set_defaults(handler=execute_subcommand_disable_user)
+    parser.set_defaults(handler=execute_subcommand_enable_user)
