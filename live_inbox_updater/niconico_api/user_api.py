@@ -53,7 +53,7 @@ class UserIconUrl(BaseModel):
 def fetch_user_icon_urls(
     user_ids: list[str],
     useragent: str,
-) -> list[str]:
+) -> list[UserIconUrl]:
     users_response = fetch_users(
         user_ids=user_ids,
         useragent=useragent,
