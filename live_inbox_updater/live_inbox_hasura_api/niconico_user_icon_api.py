@@ -10,9 +10,11 @@ logger = getLogger(__name__)
 
 class InsertNiconicoUserIconRequestVariables(BaseModel):
     url: str
+    fetched_at: datetime
     file_size: int
     hash_md5: str
-    fetched_at: datetime
+    content_type: str
+    file_key: str
 
 
 class InsertNiconicoUserIconCacheResponseInsertNiconicoUserIconCache(BaseModel):
@@ -41,16 +43,20 @@ def insert_niconico_user_icon_cache(
         "query": """
 mutation InsertNiconicoUserIconCache(
   $url: String!
-  $size: Int!
-  $hash_md5: String!
   $fetched_at: timestamptz!
+  $file_size: Int!
+  $hash_md5: String!
+  $content_type: String!
+  $file_key: String!
 ) {
   insert_niconico_user_icon_caches_one(
     object: {
       url: $url
-      size: $size
-      hash_md5: $hash_md5
       fetched_at: $fetched_at
+      file_size: $file_size
+      hash_md5: $hash_md5
+      content_type: $content_type
+      file_key: $file_key
     }
   ) {
     id

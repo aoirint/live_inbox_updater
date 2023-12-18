@@ -2,6 +2,7 @@ import hashlib
 import logging
 import os
 import time
+import uuid
 from argparse import ArgumentParser
 from datetime import datetime, timezone
 from logging import getLogger
@@ -30,6 +31,27 @@ from .niconico_api.user_broadcast_history_api import (
 logger = getLogger(__name__)
 
 
+def create_niconico_user_icon_path(
+    niconico_user_icon_dir: Path,
+    file_key: str,
+    content_type: str,
+) -> Path:
+    suffix: str | None = None
+    if content_type == "image/jpeg":
+        suffix = ".jpg"
+    elif content_type == "image/png":
+        suffix = ".png"
+    elif content_type == "image/gif":
+        suffix = ".gif"
+    else:
+        raise Exception(
+            f"Unsupported content_type: {content_type}",
+        )
+
+    file_name = f"{file_key}{suffix}"
+    return niconico_user_icon_dir / file_name
+
+
 def fetch_uncached_niconico_user_icons(
     niconico_user_icon_dir: Path,
     live_inbox_hasura_url: str,
@@ -53,9 +75,10 @@ def fetch_uncached_niconico_user_icons(
     )
 
     for niconico_user in uncached_icon_niconico_users:
-        icon_url = niconico_user.icon_url
+        file_key = str(uuid.uuid4())
         fetched_at = datetime.now(tz=timezone.utc)
 
+        icon_url = niconico_user.icon_url
         res = httpx.get(
             icon_url,
             headers={
@@ -66,9 +89,17 @@ def fetch_uncached_niconico_user_icons(
 
         content_type = res.headers.get("Content-Type")
         if content_type is None:
-            raise Exception("Invalid icon response")
+            raise Exception("Invalid response: No Content-Type response header")
+
+        icon_path = create_niconico_user_icon_path(
+            niconico_user_icon_dir=niconico_user_icon_dir,
+            file_key=file_key,
+            content_type=content_type,
+        )
+        icon_path.parent.mkdir(parents=True, exist_ok=True)
 
         content = res.content
+        icon_path.write_bytes(content)
 
         file_size = len(content)
         hash_md5 = hashlib.md5(content).hexdigest()
@@ -76,9 +107,11 @@ def fetch_uncached_niconico_user_icons(
         insert_niconico_user_icon_cache(
             obj=InsertNiconicoUserIconRequestVariables(
                 url=icon_url,
+                fetched_at=fetched_at,
                 file_size=file_size,
                 hash_md5=hash_md5,
-                fetched_at=fetched_at,
+                content_type=content_type,
+                file_key=file_key,
             ),
             hasura_url=live_inbox_hasura_url,
             hasura_token=live_inbox_hasura_token,
