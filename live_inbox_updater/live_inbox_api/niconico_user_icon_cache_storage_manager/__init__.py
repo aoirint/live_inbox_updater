@@ -1,7 +1,7 @@
-from .base import NiconicoUserIconCacheStorageManager
-from .file import NiconicoUserIconCacheStorageFileManager
+from .base import LiveInboxApiNiconicoUserIconCacheStorageManager
+from .file import LiveInboxApiNiconicoUserIconCacheStorageFileManager
 
 __all__ = [
-    "NiconicoUserIconCacheStorageManager",
-    "NiconicoUserIconCacheStorageFileManager",
+    "LiveInboxApiNiconicoUserIconCacheStorageManager",
+    "LiveInboxApiNiconicoUserIconCacheStorageFileManager",
 ]

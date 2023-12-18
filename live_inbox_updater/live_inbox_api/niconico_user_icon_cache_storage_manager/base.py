@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class NiconicoUserIconCacheStorageManager(ABC):
+class LiveInboxApiNiconicoUserIconCacheStorageManager(ABC):
     @abstractmethod
     def check_exists(
         self,

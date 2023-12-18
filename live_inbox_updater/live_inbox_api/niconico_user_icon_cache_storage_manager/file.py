@@ -1,9 +1,11 @@
 from pathlib import Path
 
-from .base import NiconicoUserIconCacheStorageManager
+from .base import LiveInboxApiNiconicoUserIconCacheStorageManager
 
 
-class NiconicoUserIconCacheStorageFileManager(NiconicoUserIconCacheStorageManager):
+class LiveInboxApiNiconicoUserIconCacheStorageFileManager(
+    LiveInboxApiNiconicoUserIconCacheStorageManager
+):
     def __init__(
         self,
         niconico_user_icon_dir: Path,

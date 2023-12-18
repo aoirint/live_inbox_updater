@@ -5,7 +5,7 @@ from typing import Iterable
 from pydantic import BaseModel
 
 
-class NiconicoLiveProgramUpsertObject(BaseModel):
+class LiveInboxApiNiconicoLiveProgramUpsertObject(BaseModel):
     remote_niconico_content_id: str
     remote_niconico_user_id: str
     title: str
@@ -15,10 +15,10 @@ class NiconicoLiveProgramUpsertObject(BaseModel):
     end_time: datetime | None
 
 
-class NiconicoLiveProgramManager(ABC):
+class LiveInboxApiNiconicoLiveProgramManager(ABC):
     @abstractmethod
     def upsert_all(
         self,
-        upsert_objects: Iterable[NiconicoLiveProgramUpsertObject],
+        upsert_objects: Iterable[LiveInboxApiNiconicoLiveProgramUpsertObject],
     ) -> None:
         ...

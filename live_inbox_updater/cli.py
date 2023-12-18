@@ -11,21 +11,21 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from .live_inbox_api.niconico_live_program_manager import (
-    NiconicoLiveProgramHasuraManager,
-    NiconicoLiveProgramManager,
-    NiconicoLiveProgramUpsertObject,
+    LiveInboxApiNiconicoLiveProgramHasuraManager,
+    LiveInboxApiNiconicoLiveProgramManager,
+    LiveInboxApiNiconicoLiveProgramUpsertObject,
 )
 from .live_inbox_api.niconico_user_icon_cache_metadata_manager import (
-    NiconicoUserIconCacheMetadataHasuraManager,
-    NiconicoUserIconCacheMetadataManager,
+    LiveInboxApiNiconicoUserIconCacheMetadataHasuraManager,
+    LiveInboxApiNiconicoUserIconCacheMetadataManager,
 )
 from .live_inbox_api.niconico_user_icon_cache_storage_manager import (
-    NiconicoUserIconCacheStorageFileManager,
-    NiconicoUserIconCacheStorageManager,
+    LiveInboxApiNiconicoUserIconCacheStorageFileManager,
+    LiveInboxApiNiconicoUserIconCacheStorageManager,
 )
 from .live_inbox_api.niconico_user_manager import (
+    LiveInboxApiNiconicoUserManager,
     NiconicoUserHasuraManager,
-    NiconicoUserManager,
 )
 from .niconico_api.niconico_user_broadcast_history_client import (
     NiconicoApiNiconicoUserBroadcastHistoryClient,
@@ -40,10 +40,10 @@ logger = getLogger(__name__)
 
 
 def fetch_uncached_niconico_user_icons(
-    niconico_user_manager: NiconicoUserManager,
+    niconico_user_manager: LiveInboxApiNiconicoUserManager,
     niconico_user_icon_client: NiconicoApiNiconicoUserIconClient,
-    niconico_user_icon_cache_metadata_manager: NiconicoUserIconCacheMetadataManager,
-    niconico_user_icon_cache_storage_manager: NiconicoUserIconCacheStorageManager,
+    niconico_user_icon_cache_metadata_manager: LiveInboxApiNiconicoUserIconCacheMetadataManager,
+    niconico_user_icon_cache_storage_manager: LiveInboxApiNiconicoUserIconCacheStorageManager,
 ) -> None:
     """
     未取得のユーザアイコンを取得する
@@ -109,9 +109,9 @@ def fetch_uncached_niconico_user_icons(
 
 
 def update_niconico_live_programs(
-    niconico_user_manager: NiconicoUserManager,
+    niconico_user_manager: LiveInboxApiNiconicoUserManager,
     niconico_user_broadcast_history_client: NiconicoApiNiconicoUserBroadcastHistoryClient,
-    niconico_live_program_manager: NiconicoLiveProgramManager,
+    niconico_live_program_manager: LiveInboxApiNiconicoLiveProgramManager,
 ) -> None:
     niconico_users = niconico_user_manager.get_all()
     enabled_niconico_users = list(
@@ -137,7 +137,7 @@ def update_niconico_live_programs(
             f"Fetched the latest {len(user_broadcast_programs)} live programs"
         )
 
-        upsert_objects: list[NiconicoLiveProgramUpsertObject] = []
+        upsert_objects: list[LiveInboxApiNiconicoLiveProgramUpsertObject] = []
         for program in user_broadcast_programs:
             logger.info(
                 f"{program.niconico_content_id}: {program.title} "
@@ -145,7 +145,7 @@ def update_niconico_live_programs(
             )
 
             upsert_objects.append(
-                NiconicoLiveProgramUpsertObject(
+                LiveInboxApiNiconicoLiveProgramUpsertObject(
                     remote_niconico_content_id=program.niconico_content_id,
                     remote_niconico_user_id=program.niconico_user_id,
                     title=program.title,
@@ -221,15 +221,17 @@ def main() -> None:
     )
 
     niconico_user_icon_cache_metadata_manager = (
-        NiconicoUserIconCacheMetadataHasuraManager(
+        LiveInboxApiNiconicoUserIconCacheMetadataHasuraManager(
             hasura_url=live_inbox_hasura_url,
             hasura_token=live_inbox_hasura_token,
             useragent=useragent,
         )
     )
 
-    niconico_user_icon_cache_storage_manager = NiconicoUserIconCacheStorageFileManager(
-        niconico_user_icon_dir=niconico_user_icon_dir,
+    niconico_user_icon_cache_storage_manager = (
+        LiveInboxApiNiconicoUserIconCacheStorageFileManager(
+            niconico_user_icon_dir=niconico_user_icon_dir,
+        )
     )
 
     niconico_user_broadcast_history_client = (
@@ -238,7 +240,7 @@ def main() -> None:
         )
     )
 
-    niconico_live_program_manager = NiconicoLiveProgramHasuraManager(
+    niconico_live_program_manager = LiveInboxApiNiconicoLiveProgramHasuraManager(
         hasura_url=live_inbox_hasura_url,
         hasura_token=live_inbox_hasura_token,
         useragent=useragent,

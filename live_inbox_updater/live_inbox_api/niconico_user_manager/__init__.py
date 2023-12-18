@@ -1,8 +1,8 @@
-from .base import NiconicoUser, NiconicoUserManager
+from .base import LiveInboxApiNiconicoUser, LiveInboxApiNiconicoUserManager
 from .hasura import NiconicoUserHasuraManager
 
 __all__ = [
-    "NiconicoUser",
-    "NiconicoUserManager",
+    "LiveInboxApiNiconicoUser",
+    "LiveInboxApiNiconicoUserManager",
     "NiconicoUserHasuraManager",
 ]

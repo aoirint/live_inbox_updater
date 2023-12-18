@@ -5,7 +5,7 @@ from typing import Iterable
 from pydantic import BaseModel
 
 
-class NiconicoUserIconCacheMetadata(BaseModel):
+class LiveInboxApiNiconicoUserIconCacheMetadata(BaseModel):
     url: str
     fetched_at: datetime
     file_size: int
@@ -14,12 +14,12 @@ class NiconicoUserIconCacheMetadata(BaseModel):
     file_key: str
 
 
-class NiconicoUserIconCacheMetadataManager(ABC):
+class LiveInboxApiNiconicoUserIconCacheMetadataManager(ABC):
     @abstractmethod
     def get_by_urls(
         self,
         urls: Iterable[str],
-    ) -> list[NiconicoUserIconCacheMetadata]:
+    ) -> list[LiveInboxApiNiconicoUserIconCacheMetadata]:
         ...
 
     @abstractmethod

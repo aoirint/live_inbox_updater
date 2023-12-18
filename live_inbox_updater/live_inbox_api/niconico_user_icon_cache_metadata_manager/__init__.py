@@ -1,8 +1,11 @@
-from .base import NiconicoUserIconCacheMetadata, NiconicoUserIconCacheMetadataManager
-from .hasura import NiconicoUserIconCacheMetadataHasuraManager
+from .base import (
+    LiveInboxApiNiconicoUserIconCacheMetadata,
+    LiveInboxApiNiconicoUserIconCacheMetadataManager,
+)
+from .hasura import LiveInboxApiNiconicoUserIconCacheMetadataHasuraManager
 
 __all__ = [
-    "NiconicoUserIconCacheMetadata",
-    "NiconicoUserIconCacheMetadataManager",
-    "NiconicoUserIconCacheMetadataHasuraManager",
+    "LiveInboxApiNiconicoUserIconCacheMetadata",
+    "LiveInboxApiNiconicoUserIconCacheMetadataManager",
+    "LiveInboxApiNiconicoUserIconCacheMetadataHasuraManager",
 ]

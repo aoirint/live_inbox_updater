@@ -1,8 +1,11 @@
-from .base import NiconicoLiveProgramManager, NiconicoLiveProgramUpsertObject
-from .hasura import NiconicoLiveProgramHasuraManager
+from .base import (
+    LiveInboxApiNiconicoLiveProgramManager,
+    LiveInboxApiNiconicoLiveProgramUpsertObject,
+)
+from .hasura import LiveInboxApiNiconicoLiveProgramHasuraManager
 
 __all__ = [
-    "NiconicoLiveProgramUpsertObject",
-    "NiconicoLiveProgramManager",
-    "NiconicoLiveProgramHasuraManager",
+    "LiveInboxApiNiconicoLiveProgramUpsertObject",
+    "LiveInboxApiNiconicoLiveProgramManager",
+    "LiveInboxApiNiconicoLiveProgramHasuraManager",
 ]
