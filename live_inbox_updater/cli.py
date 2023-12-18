@@ -4,6 +4,7 @@ from logging import getLogger
 
 from dotenv import load_dotenv
 
+from . import __VERSION__ as APP_VERSION
 from .app_config import load_app_config_from_env
 from .subcommand.subcommand_update import (
     add_arguments_subcommand_update,
@@ -18,6 +19,11 @@ def main() -> None:
     app_config = load_app_config_from_env()
 
     parser = ArgumentParser()
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=APP_VERSION,
+    )
 
     logging.basicConfig(
         level=logging.INFO,

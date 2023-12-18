@@ -3,12 +3,14 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from . import __VERSION__ as APP_VERSION
+
 
 class AppConfig(BaseModel):
     live_inbox_hasura_url: str | None
     live_inbox_hasura_token: str | None
     niconico_user_icon_dir: Path | None
-    useragent: str | None
+    useragent: str
 
 
 def load_app_config_from_env():
@@ -20,6 +22,9 @@ def load_app_config_from_env():
     niconico_user_icon_dir: Path | None = None
     if niconico_user_icon_dir_string is not None:
         niconico_user_icon_dir = Path(niconico_user_icon_dir_string)
+
+    if useragent is None:
+        useragent = f"LiveInboxBot/{APP_VERSION}"
 
     return AppConfig(
         live_inbox_hasura_url=live_inbox_hasura_url,
