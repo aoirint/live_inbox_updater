@@ -48,8 +48,8 @@ def fetch_uncached_niconico_user_icons(
 
     # ユーザアイコンURLリストを取得
     niconico_users = niconico_user_manager.get_all()
-    enabled_niconico_users = filter(
-        lambda niconico_user: niconico_user.enabled, niconico_users
+    enabled_niconico_users = list(
+        filter(lambda niconico_user: niconico_user.enabled, niconico_users),
     )
 
     icon_urls: set[str] = set()
