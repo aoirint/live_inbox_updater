@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from pydantic import BaseModel
 
@@ -6,15 +7,19 @@ from pydantic import BaseModel
 class AppConfig(BaseModel):
     live_inbox_hasura_url: str | None
     live_inbox_hasura_token: str | None
-    niconico_user_icon_dir: str | None
+    niconico_user_icon_dir: Path | None
     useragent: str | None
 
 
 def load_app_config_from_env():
     live_inbox_hasura_url = os.environ.get("LIVE_INBOX_HASURA_URL") or None
     live_inbox_hasura_token = os.environ.get("LIVE_INBOX_HASURA_TOKEN") or None
-    niconico_user_icon_dir = os.environ.get("APP_NICONICO_USER_ICON_DIR") or None
+    niconico_user_icon_dir_string = os.environ.get("APP_NICONICO_USER_ICON_DIR") or None
     useragent = os.environ.get("APP_USERAGENT") or None
+
+    niconico_user_icon_dir: Path | None = None
+    if niconico_user_icon_dir_string is not None:
+        niconico_user_icon_dir = Path(niconico_user_icon_dir_string)
 
     return AppConfig(
         live_inbox_hasura_url=live_inbox_hasura_url,

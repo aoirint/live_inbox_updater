@@ -165,7 +165,7 @@ def update_niconico_live_programs(
 class SubcommandUpdateArguments(BaseModel):
     live_inbox_hasura_url: str
     live_inbox_hasura_token: str
-    niconico_user_icon_dir: str
+    niconico_user_icon_dir: Path
     useragent: str
 
 
@@ -230,7 +230,7 @@ def execute_subcommand_update(
 ):
     live_inbox_hasura_url: str = args.live_inbox_hasura_url
     live_inbox_hasura_token: str = args.live_inbox_hasura_token
-    niconico_user_icon_dir: str = args.niconico_user_icon_dir
+    niconico_user_icon_dir: Path = args.niconico_user_icon_dir
     useragent: str = args.useragent
 
     subcommand_update(
