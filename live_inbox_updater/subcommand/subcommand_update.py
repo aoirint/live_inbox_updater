@@ -101,6 +101,8 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
         _update_job,
     )
 
+    scheduler.run_all()
+
     scheduled_time: datetime | None = None
     while True:
         now = datetime.now(tz=timezone.utc)
