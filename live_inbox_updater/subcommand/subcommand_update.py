@@ -120,12 +120,6 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
     else:
         raise Exception("Unexpected state.")
 
-    niconico_user_icon_cache_storage_manager = (
-        LiveInboxApiNiconicoUserIconCacheStorageFileManager(
-            niconico_user_icon_dir=niconico_user_icon_dir,
-        )
-    )
-
     niconico_user_broadcast_history_client = (
         NiconicoApiNiconicoUserBroadcastHistoryNiconicoClient(
             useragent=useragent,
