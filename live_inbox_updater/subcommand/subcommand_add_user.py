@@ -5,8 +5,8 @@ from pydantic import BaseModel
 
 from ..app_config import AppConfig
 from ..live_inbox_api.niconico_user_manager import NiconicoUserHasuraManager
-from ..niconico_api.niconico_user_client import NiconicoApiNiconicoUserNiconicoClient
 from ..live_inbox_utility import add_users
+from ..niconico_api.niconico_user_client import NiconicoApiNiconicoUserNiconicoClient
 
 logger = getLogger(__name__)
 
