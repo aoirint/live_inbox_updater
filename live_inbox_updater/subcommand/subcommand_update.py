@@ -17,6 +17,8 @@ from ..live_inbox_api.niconico_user_icon_cache_metadata_manager import (
 )
 from ..live_inbox_api.niconico_user_icon_cache_storage_manager import (
     LiveInboxApiNiconicoUserIconCacheStorageFileManager,
+    LiveInboxApiNiconicoUserIconCacheStorageManager,
+    LiveInboxApiNiconicoUserIconCacheStorageS3Manager,
 )
 from ..live_inbox_api.niconico_user_manager import NiconicoUserHasuraManager
 from ..live_inbox_utility import update_job
@@ -26,14 +28,33 @@ from ..niconico_api.niconico_user_broadcast_history_client import (
 from ..niconico_api.niconico_user_icon_client import (
     NiconicoApiNiconicoUserIconNiconicoClient,
 )
+from ..storage_type import StorageType, validate_storage_type_string
 
 logger = getLogger(__name__)
+
+
+class SubcommandUpdateArgumentsStorageFileConfig(BaseModel):
+    storage_file_dir: Path
+
+
+class SubcommandUpdateArgumentsStorageS3Config(BaseModel):
+    storage_s3_bucket_name: str
+    storage_s3_endpoint_url: str
+    storage_s3_region_name: str | None
+    storage_s3_access_key_id: str
+    storage_s3_secret_access_key: str
 
 
 class SubcommandUpdateArguments(BaseModel):
     live_inbox_hasura_url: str
     live_inbox_hasura_token: str
+
     niconico_user_icon_dir: Path
+
+    storage_type: StorageType
+    storage_file_config: SubcommandUpdateArgumentsStorageFileConfig | None
+    storage_s3_config: SubcommandUpdateArgumentsStorageS3Config | None
+
     useragent: str
     update_interval: int
 
@@ -41,7 +62,13 @@ class SubcommandUpdateArguments(BaseModel):
 def subcommand_update(args: SubcommandUpdateArguments) -> None:
     live_inbox_hasura_url = args.live_inbox_hasura_url
     live_inbox_hasura_token = args.live_inbox_hasura_token
+
     niconico_user_icon_dir = args.niconico_user_icon_dir
+
+    storage_type = args.storage_type
+    storage_file_config = args.storage_file_config
+    storage_s3_config = args.storage_s3_config
+
     useragent = args.useragent
     update_interval = args.update_interval
 
@@ -62,6 +89,36 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
             useragent=useragent,
         )
     )
+
+    niconico_user_icon_cache_storage_manager: LiveInboxApiNiconicoUserIconCacheStorageManager | None = (
+        None
+    )
+    if storage_type == "file":
+        if storage_file_config is None:
+            raise Exception("Unexpected state.")
+
+        niconico_user_icon_cache_storage_manager = (
+            LiveInboxApiNiconicoUserIconCacheStorageFileManager(
+                niconico_user_icon_dir=storage_file_config.storage_file_dir
+                / "niconico_user_icons",
+            )
+        )
+    elif storage_type == "s3":
+        if storage_s3_config is None:
+            raise Exception("Unexpected state.")
+
+        niconico_user_icon_cache_storage_manager = (
+            LiveInboxApiNiconicoUserIconCacheStorageS3Manager(
+                dir="niconico_user_icons",
+                bucket_name=storage_s3_config.storage_s3_bucket_name,
+                endpoint_url=storage_s3_config.storage_s3_endpoint_url,
+                region_name=storage_s3_config.storage_s3_region_name,
+                access_key_id=storage_s3_config.storage_s3_access_key_id,
+                secret_access_key=storage_s3_config.storage_s3_secret_access_key,
+            )
+        )
+    else:
+        raise Exception("Unexpected state.")
 
     niconico_user_icon_cache_storage_manager = (
         LiveInboxApiNiconicoUserIconCacheStorageFileManager(
@@ -124,7 +181,47 @@ def execute_subcommand_update(
 ) -> None:
     live_inbox_hasura_url: str = args.live_inbox_hasura_url
     live_inbox_hasura_token: str = args.live_inbox_hasura_token
+
     niconico_user_icon_dir: Path = args.niconico_user_icon_dir
+
+    storage_type: str = args.storage_type
+    if not validate_storage_type_string(storage_type):
+        raise ValueError("Invalid storage type string. Use 'file' or 's3'.")
+
+    storage_file_config: SubcommandUpdateArgumentsStorageFileConfig | None = None
+    if storage_type == "file":
+        storage_file_dir: Path | None = args.storage_file_dir
+        if storage_file_dir is None:
+            raise ValueError("Invalid storage file config.")
+
+        storage_file_config = SubcommandUpdateArgumentsStorageFileConfig(
+            storage_file_dir=storage_file_dir,
+        )
+
+    storage_s3_config: SubcommandUpdateArgumentsStorageS3Config | None = None
+    if storage_type == "s3":
+        storage_s3_bucket_name: str | None = args.storage_s3_bucket_name
+        storage_s3_endpoint_url: str | None = args.storage_s3_endpoint_url
+        storage_s3_region_name: str | None = args.storage_s3_region_name
+        storage_s3_access_key_id: str | None = args.storage_s3_access_key_id
+        storage_s3_secret_access_key: str | None = args.storage_s3_secret_access_key
+
+        if (
+            storage_s3_bucket_name is None
+            or storage_s3_endpoint_url is None
+            or storage_s3_access_key_id is None
+            or storage_s3_secret_access_key is None
+        ):
+            raise ValueError("Invalid storage s3 config.")
+
+        storage_s3_config = SubcommandUpdateArgumentsStorageS3Config(
+            storage_s3_bucket_name=storage_s3_bucket_name,
+            storage_s3_endpoint_url=storage_s3_endpoint_url,
+            storage_s3_region_name=storage_s3_region_name,
+            storage_s3_access_key_id=storage_s3_access_key_id,
+            storage_s3_secret_access_key=storage_s3_secret_access_key,
+        )
+
     useragent: str = args.useragent
     update_interval: int = args.update_interval
 
@@ -133,6 +230,9 @@ def execute_subcommand_update(
             live_inbox_hasura_url=live_inbox_hasura_url,
             live_inbox_hasura_token=live_inbox_hasura_token,
             niconico_user_icon_dir=niconico_user_icon_dir,
+            storage_type=storage_type,
+            storage_file_config=storage_file_config,
+            storage_s3_config=storage_s3_config,
             useragent=useragent,
             update_interval=update_interval,
         ),
@@ -155,12 +255,53 @@ def add_arguments_subcommand_update(
         default=app_config.live_inbox_hasura_token,
         required=app_config.live_inbox_hasura_token is None,
     )
+
     parser.add_argument(
         "--niconico_user_icon_dir",
         type=Path,
         default=app_config.niconico_user_icon_dir,
         required=app_config.niconico_user_icon_dir is None,
     )
+
+    parser.add_argument(
+        "--storage_type",
+        type=str,
+        default=app_config.storage_type,
+        required=app_config.storage_type is None,
+    )
+
+    parser.add_argument(
+        "--storage_file_dir",
+        type=Path,
+        default=app_config.storage_file_dir,
+    )
+
+    parser.add_argument(
+        "--storage_s3_bucket_name",
+        type=str,
+        default=app_config.storage_s3_bucket_name,
+    )
+    parser.add_argument(
+        "--storage_s3_endpoint_url",
+        type=str,
+        default=app_config.storage_s3_endpoint_url,
+    )
+    parser.add_argument(
+        "--storage_s3_region_name",
+        type=str,
+        default=app_config.storage_s3_region_name,
+    )
+    parser.add_argument(
+        "--storage_s3_access_key_id",
+        type=str,
+        default=app_config.storage_s3_access_key_id,
+    )
+    parser.add_argument(
+        "--storage_s3_secret_access_key",
+        type=str,
+        default=app_config.storage_s3_secret_access_key,
+    )
+
     parser.add_argument(
         "--useragent",
         type=str,
