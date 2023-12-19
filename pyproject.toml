@@ -27,6 +27,7 @@ pydantic = "^2.5.2"
 httpx = "^0.25.2"
 python-dotenv = "^1.0.0"
 pyjwt = "^2.8.0"
+schedule = "^1.2.1"
 
 
 [tool.poetry.group.dev.dependencies]
