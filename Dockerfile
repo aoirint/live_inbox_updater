@@ -45,7 +45,7 @@ ADD ./pyproject.toml ./poetry.lock /code/live_inbox_updater/
 RUN <<EOF
     set -eu
 
-    gosu user poetry install --only main
+    gosu user poetry install --no-cache --only main
 EOF
 
 ADD ./live_inbox_updater /code/live_inbox_updater/live_inbox_updater
