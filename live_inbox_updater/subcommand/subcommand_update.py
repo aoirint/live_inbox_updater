@@ -33,7 +33,7 @@ class SubcommandUpdateArguments(BaseModel):
     live_inbox_hasura_token: str
     niconico_user_icon_dir: Path
     useragent: str
-    interval: int
+    update_interval: int
 
 
 def subcommand_update(args: SubcommandUpdateArguments) -> None:
@@ -41,7 +41,7 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
     live_inbox_hasura_token = args.live_inbox_hasura_token
     niconico_user_icon_dir = args.niconico_user_icon_dir
     useragent = args.useragent
-    interval = args.interval
+    update_interval = args.update_interval
 
     niconico_user_manager = NiconicoUserHasuraManager(
         hasura_url=live_inbox_hasura_url,
@@ -89,7 +89,7 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
             niconico_live_program_manager=niconico_live_program_manager,
         )
 
-    schedule.every(interval).seconds.do(
+    schedule.every(update_interval).seconds.do(
         _update_job,
     )
 
@@ -105,7 +105,7 @@ def execute_subcommand_update(
     live_inbox_hasura_token: str = args.live_inbox_hasura_token
     niconico_user_icon_dir: Path = args.niconico_user_icon_dir
     useragent: str = args.useragent
-    interval: int = args.interval
+    update_interval: int = args.update_interval
 
     subcommand_update(
         args=SubcommandUpdateArguments(
@@ -113,7 +113,7 @@ def execute_subcommand_update(
             live_inbox_hasura_token=live_inbox_hasura_token,
             niconico_user_icon_dir=niconico_user_icon_dir,
             useragent=useragent,
-            interval=interval,
+            update_interval=update_interval,
         ),
     )
 
