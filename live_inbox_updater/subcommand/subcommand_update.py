@@ -1,7 +1,9 @@
+import time
 from argparse import ArgumentParser, Namespace
 from logging import getLogger
 from pathlib import Path
 
+import schedule
 from pydantic import BaseModel
 
 from ..app_config import AppConfig
@@ -15,10 +17,7 @@ from ..live_inbox_api.niconico_user_icon_cache_storage_manager import (
     LiveInboxApiNiconicoUserIconCacheStorageFileManager,
 )
 from ..live_inbox_api.niconico_user_manager import NiconicoUserHasuraManager
-from ..live_inbox_utility import (
-    fetch_uncached_niconico_user_icons,
-    update_niconico_live_programs,
-)
+from ..live_inbox_utility import update_job
 from ..niconico_api.niconico_user_broadcast_history_client import (
     NiconicoApiNiconicoUserBroadcastHistoryNiconicoClient,
 )
@@ -34,6 +33,7 @@ class SubcommandUpdateArguments(BaseModel):
     live_inbox_hasura_token: str
     niconico_user_icon_dir: Path
     useragent: str
+    interval: int
 
 
 def subcommand_update(args: SubcommandUpdateArguments) -> None:
@@ -41,6 +41,7 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
     live_inbox_hasura_token = args.live_inbox_hasura_token
     niconico_user_icon_dir = args.niconico_user_icon_dir
     useragent = args.useragent
+    interval = args.interval
 
     niconico_user_manager = NiconicoUserHasuraManager(
         hasura_url=live_inbox_hasura_url,
@@ -78,18 +79,23 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
         useragent=useragent,
     )
 
-    fetch_uncached_niconico_user_icons(
-        niconico_user_manager=niconico_user_manager,
-        niconico_user_icon_client=niconico_user_icon_client,
-        niconico_user_icon_cache_storage_manager=niconico_user_icon_cache_storage_manager,
-        niconico_user_icon_cache_metadata_manager=niconico_user_icon_cache_metadata_manager,
+    def _update_job() -> None:
+        update_job(
+            niconico_user_manager=niconico_user_manager,
+            niconico_user_icon_client=niconico_user_icon_client,
+            niconico_user_icon_cache_storage_manager=niconico_user_icon_cache_storage_manager,
+            niconico_user_icon_cache_metadata_manager=niconico_user_icon_cache_metadata_manager,
+            niconico_user_broadcast_history_client=niconico_user_broadcast_history_client,
+            niconico_live_program_manager=niconico_live_program_manager,
+        )
+
+    schedule.every(interval).seconds.do(
+        _update_job,
     )
 
-    update_niconico_live_programs(
-        niconico_user_manager=niconico_user_manager,
-        niconico_user_broadcast_history_client=niconico_user_broadcast_history_client,
-        niconico_live_program_manager=niconico_live_program_manager,
-    )
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 
 def execute_subcommand_update(
@@ -99,6 +105,7 @@ def execute_subcommand_update(
     live_inbox_hasura_token: str = args.live_inbox_hasura_token
     niconico_user_icon_dir: Path = args.niconico_user_icon_dir
     useragent: str = args.useragent
+    interval: int = args.interval
 
     subcommand_update(
         args=SubcommandUpdateArguments(
@@ -106,6 +113,7 @@ def execute_subcommand_update(
             live_inbox_hasura_token=live_inbox_hasura_token,
             niconico_user_icon_dir=niconico_user_icon_dir,
             useragent=useragent,
+            interval=interval,
         ),
     )
 
@@ -137,6 +145,13 @@ def add_arguments_subcommand_update(
         type=str,
         default=app_config.useragent,
         required=app_config.useragent is None,
+    )
+    parser.add_argument(
+        "--update_interval",
+        type=int,
+        default=app_config.update_interval,
+        required=app_config.update_interval is None,
+        help="Update interval in seconds",
     )
 
     parser.set_defaults(handler=execute_subcommand_update)
