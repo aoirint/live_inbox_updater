@@ -52,3 +52,4 @@ ADD ./live_inbox_updater /code/live_inbox_updater/live_inbox_updater
 ADD ./scripts /code/live_inbox_updater/scripts
 
 ENTRYPOINT [ "gosu", "user", "poetry", "run", "python", "-m", "live_inbox_updater" ]
+CMD [ "update" ]
