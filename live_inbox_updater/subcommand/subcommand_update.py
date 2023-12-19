@@ -5,8 +5,8 @@ from datetime import datetime, timedelta, timezone
 from logging import getLogger
 from pathlib import Path
 
-import schedule
 from pydantic import BaseModel
+from schedule import Scheduler
 
 from ..app_config import AppConfig
 from ..live_inbox_api.niconico_live_program_manager import (
@@ -96,7 +96,8 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
         except Exception:
             traceback.print_exc()
 
-    schedule.every(update_interval).seconds.do(
+    scheduler = Scheduler()
+    scheduler.every(update_interval).seconds.do(
         _update_job,
     )
 
@@ -105,14 +106,14 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
         now = datetime.now(tz=timezone.utc)
 
         if scheduled_time is None or scheduled_time < now:
-            scheduled_time_seconds = schedule.idle_seconds()
+            scheduled_time_seconds = scheduler.idle_seconds()
             if scheduled_time_seconds is not None:
                 scheduled_time = now + timedelta(seconds=scheduled_time_seconds)
             else:
                 scheduled_time = None
             logger.info(f"Next schedule: {scheduled_time}")
 
-        schedule.run_pending()
+        scheduler.run_pending()
         time.sleep(1)
 
 
