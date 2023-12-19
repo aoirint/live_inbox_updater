@@ -9,7 +9,5 @@ services:
       - APP_NICONICO_USER_ICON_DIR=${APP_NICONICO_USER_ICON_DIR:?}
       - APP_USERAGENT=${APP_USERAGENT:?}
       - APP_UPDATE_INTERVAL=${APP_UPDATE_INTERVAL:?}
-    ports:
-      - "${HOST_PORT:?}:8000"
     volumes:
       - "./cache/niconico_user_icons:/code/live_inbox_updater/cache/niconico_user_icons"
