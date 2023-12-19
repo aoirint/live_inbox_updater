@@ -108,7 +108,7 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
         now = datetime.now(tz=timezone.utc)
 
         if scheduled_time is None or scheduled_time < now:
-            scheduled_time_seconds = scheduler.idle_seconds()
+            scheduled_time_seconds = scheduler.idle_seconds
             if scheduled_time_seconds is not None:
                 scheduled_time = now + timedelta(seconds=scheduled_time_seconds)
             else:
