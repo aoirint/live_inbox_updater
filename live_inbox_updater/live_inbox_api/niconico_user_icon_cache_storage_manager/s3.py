@@ -9,12 +9,14 @@ class LiveInboxApiNiconicoUserIconCacheStorageS3Manager(
 ):
     def __init__(
         self,
+        dir: str,
         bucket_name: str,
         endpoint_url: str,
         region_name: str | None,
         access_key_id: str,
         secret_access_key: str,
     ):
+        self.dir = dir
         self.bucket_name = bucket_name
 
         self.endpoint_url = endpoint_url
@@ -35,6 +37,8 @@ class LiveInboxApiNiconicoUserIconCacheStorageS3Manager(
         file_key: str,
         content_type: str,
     ) -> str:
+        dir = self.dir
+
         suffix: str | None = None
         if content_type == "image/jpeg":
             suffix = ".jpg"
@@ -47,8 +51,8 @@ class LiveInboxApiNiconicoUserIconCacheStorageS3Manager(
                 f"Unsupported content_type: {content_type}",
             )
 
-        object_key = f"{file_key}{suffix}"
-        return object_key
+        file_name = f"{file_key}{suffix}"
+        return f"{dir}/{file_name}"
 
     def check_exists(
         self,

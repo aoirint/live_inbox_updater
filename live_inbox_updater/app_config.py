@@ -17,6 +17,7 @@ class AppConfig(BaseModel):
 
     storage_file_dir: Path | None
 
+    storage_s3_dir: str | None
     storage_s3_bucket_name: str | None
     storage_s3_endpoint_url: str | None
     storage_s3_region_name: str | None
@@ -50,6 +51,7 @@ def load_app_config_from_env() -> AppConfig:
     if storage_file_dir_string is not None:
         storage_file_dir = Path(storage_file_dir_string)
 
+    storage_s3_dir = os.environ.get("APP_STORAGE_S3_DIR") or None
     storage_s3_bucket_name = os.environ.get("APP_STORAGE_S3_BUCKET_NAME") or None
     storage_s3_endpoint_url = os.environ.get("APP_STORAGE_S3_ENDPOINT_URL") or None
     storage_s3_region_name = os.environ.get("APP_STORAGE_S3_REGION_NAME") or None
@@ -73,6 +75,7 @@ def load_app_config_from_env() -> AppConfig:
         niconico_user_icon_dir=niconico_user_icon_dir,
         storage_type=storage_type,
         storage_file_dir=storage_file_dir,
+        storage_s3_dir=storage_s3_dir,
         storage_s3_bucket_name=storage_s3_bucket_name,
         storage_s3_endpoint_url=storage_s3_endpoint_url,
         storage_s3_region_name=storage_s3_region_name,
