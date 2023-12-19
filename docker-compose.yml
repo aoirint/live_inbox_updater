@@ -1,0 +1,14 @@
+services:
+  app:
+    # image: docker.aoirint.com/aoirint/live_inbox_updater:latest
+    build: .
+    restart: on-failure
+    environment:
+      - LIVE_INBOX_HASURA_URL=${LIVE_INBOX_HASURA_URL:?}
+      - LIVE_INBOX_HASURA_TOKEN=${LIVE_INBOX_HASURA_TOKEN:?}
+      - APP_NICONICO_USER_ICON_DIR=${APP_NICONICO_USER_ICON_DIR:?}
+      - APP_USERAGENT=${APP_USERAGENT:?}
+    ports:
+      - "${HOST_PORT:?}:8000"
+    volumes:
+      - "./cache/niconico_user_icons:/code/live_inbox_updater/cache/niconico_user_icons"
