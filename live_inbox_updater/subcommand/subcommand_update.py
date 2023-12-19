@@ -1,5 +1,6 @@
 import time
 from argparse import ArgumentParser, Namespace
+from datetime import datetime, timedelta, timezone
 from logging import getLogger
 from pathlib import Path
 
@@ -93,7 +94,18 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
         _update_job,
     )
 
+    scheduled_time: datetime | None = None
     while True:
+        now = datetime.now(tz=timezone.utc)
+
+        if scheduled_time is None or scheduled_time < now:
+            scheduled_time_seconds = schedule.idle_seconds()
+            if scheduled_time_seconds is not None:
+                scheduled_time = now + timedelta(seconds=scheduled_time_seconds)
+            else:
+                scheduled_time = None
+            logger.info(f"Next schedule: {scheduled_time}")
+
         schedule.run_pending()
         time.sleep(1)
 
