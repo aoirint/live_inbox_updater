@@ -1,4 +1,5 @@
 import time
+import traceback
 from argparse import ArgumentParser, Namespace
 from datetime import datetime, timedelta, timezone
 from logging import getLogger
@@ -81,14 +82,19 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
     )
 
     def _update_job() -> None:
-        update_job(
-            niconico_user_manager=niconico_user_manager,
-            niconico_user_icon_client=niconico_user_icon_client,
-            niconico_user_icon_cache_storage_manager=niconico_user_icon_cache_storage_manager,
-            niconico_user_icon_cache_metadata_manager=niconico_user_icon_cache_metadata_manager,
-            niconico_user_broadcast_history_client=niconico_user_broadcast_history_client,
-            niconico_live_program_manager=niconico_live_program_manager,
-        )
+        try:
+            update_job(
+                niconico_user_manager=niconico_user_manager,
+                niconico_user_icon_client=niconico_user_icon_client,
+                niconico_user_icon_cache_storage_manager=niconico_user_icon_cache_storage_manager,
+                niconico_user_icon_cache_metadata_manager=niconico_user_icon_cache_metadata_manager,
+                niconico_user_broadcast_history_client=niconico_user_broadcast_history_client,
+                niconico_live_program_manager=niconico_live_program_manager,
+            )
+        except KeyboardInterrupt:
+            raise
+        except Exception:
+            traceback.print_exc()
 
     schedule.every(update_interval).seconds.do(
         _update_job,
