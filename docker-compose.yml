@@ -16,4 +16,4 @@ services:
       - APP_USERAGENT=${APP_USERAGENT:?}
       - APP_UPDATE_INTERVAL=${APP_UPDATE_INTERVAL:?}
     volumes:
-      - "./cache/niconico_user_icons:/code/live_inbox_updater/cache/niconico_user_icons"
+      - "./data:/code/live_inbox_updater/data"
