@@ -2,6 +2,7 @@ services:
   app:
     # image: docker.aoirint.com/aoirint/live_inbox_updater:latest
     build: .
+    restart: on-failure
     environment:
       - LIVE_INBOX_HASURA_URL
       - LIVE_INBOX_HASURA_TOKEN
