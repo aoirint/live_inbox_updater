@@ -49,8 +49,6 @@ class SubcommandUpdateArguments(BaseModel):
     live_inbox_hasura_url: str
     live_inbox_hasura_token: str
 
-    niconico_user_icon_dir: Path
-
     storage_type: StorageType
     storage_file_config: SubcommandUpdateArgumentsStorageFileConfig | None
     storage_s3_config: SubcommandUpdateArgumentsStorageS3Config | None
@@ -62,8 +60,6 @@ class SubcommandUpdateArguments(BaseModel):
 def subcommand_update(args: SubcommandUpdateArguments) -> None:
     live_inbox_hasura_url = args.live_inbox_hasura_url
     live_inbox_hasura_token = args.live_inbox_hasura_token
-
-    niconico_user_icon_dir = args.niconico_user_icon_dir
 
     storage_type = args.storage_type
     storage_file_config = args.storage_file_config
@@ -90,9 +86,9 @@ def subcommand_update(args: SubcommandUpdateArguments) -> None:
         )
     )
 
-    niconico_user_icon_cache_storage_manager: LiveInboxApiNiconicoUserIconCacheStorageManager | None = (
-        None
-    )
+    niconico_user_icon_cache_storage_manager: (
+        LiveInboxApiNiconicoUserIconCacheStorageManager | None
+    ) = None
     if storage_type == "file":
         if storage_file_config is None:
             raise Exception("Unexpected state.")
@@ -176,11 +172,11 @@ def execute_subcommand_update(
     live_inbox_hasura_url: str = args.live_inbox_hasura_url
     live_inbox_hasura_token: str = args.live_inbox_hasura_token
 
-    niconico_user_icon_dir: Path = args.niconico_user_icon_dir
-
-    storage_type: str = args.storage_type
-    if not validate_storage_type_string(storage_type):
+    storage_type: StorageType | None = None
+    storage_type_string: str = args.storage_type
+    if not validate_storage_type_string(storage_type_string):
         raise ValueError("Invalid storage type string. Use 'file' or 's3'.")
+    storage_type = storage_type_string
 
     storage_file_config: SubcommandUpdateArgumentsStorageFileConfig | None = None
     if storage_type == "file":
@@ -223,7 +219,6 @@ def execute_subcommand_update(
         args=SubcommandUpdateArguments(
             live_inbox_hasura_url=live_inbox_hasura_url,
             live_inbox_hasura_token=live_inbox_hasura_token,
-            niconico_user_icon_dir=niconico_user_icon_dir,
             storage_type=storage_type,
             storage_file_config=storage_file_config,
             storage_s3_config=storage_s3_config,
@@ -248,13 +243,6 @@ def add_arguments_subcommand_update(
         type=str,
         default=app_config.live_inbox_hasura_token,
         required=app_config.live_inbox_hasura_token is None,
-    )
-
-    parser.add_argument(
-        "--niconico_user_icon_dir",
-        type=Path,
-        default=app_config.niconico_user_icon_dir,
-        required=app_config.niconico_user_icon_dir is None,
     )
 
     parser.add_argument(

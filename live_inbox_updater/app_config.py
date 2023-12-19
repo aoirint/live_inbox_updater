@@ -11,8 +11,6 @@ class AppConfig(BaseModel):
     live_inbox_hasura_url: str | None
     live_inbox_hasura_token: str | None
 
-    niconico_user_icon_dir: Path | None
-
     storage_type: StorageType | None
 
     storage_file_dir: Path | None
@@ -30,12 +28,6 @@ class AppConfig(BaseModel):
 def load_app_config_from_env() -> AppConfig:
     live_inbox_hasura_url = os.environ.get("LIVE_INBOX_HASURA_URL") or None
     live_inbox_hasura_token = os.environ.get("LIVE_INBOX_HASURA_TOKEN") or None
-
-    niconico_user_icon_dir_string = os.environ.get("APP_NICONICO_USER_ICON_DIR") or None
-
-    niconico_user_icon_dir: Path | None = None
-    if niconico_user_icon_dir_string is not None:
-        niconico_user_icon_dir = Path(niconico_user_icon_dir_string)
 
     storage_type_string = os.environ.get("APP_STORAGE_TYPE") or None
     storage_type: StorageType | None = None
@@ -70,7 +62,6 @@ def load_app_config_from_env() -> AppConfig:
     return AppConfig(
         live_inbox_hasura_url=live_inbox_hasura_url,
         live_inbox_hasura_token=live_inbox_hasura_token,
-        niconico_user_icon_dir=niconico_user_icon_dir,
         storage_type=storage_type,
         storage_file_dir=storage_file_dir,
         storage_s3_bucket_name=storage_s3_bucket_name,
