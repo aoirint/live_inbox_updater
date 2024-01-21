@@ -1,5 +1,11 @@
 # live_inbox_updater
 
+## Releases
+
+- [GitHub Releases](https://github.com/aoirint/live_inbox_updater/releases) (source only)
+- [GitHub Container Registry](https://github.com/aoirint/live_inbox_updater/pkgs/container/live_inbox_updater)
+- [Docker Hub](https://hub.docker.com/r/aoirint/live_inbox_updater)
+
 ## Usage
 
 ### Native usage
