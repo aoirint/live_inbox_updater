@@ -21,6 +21,7 @@ env:
 jobs:
   docker-build-and-push:
     strategy:
+      max-parallel: 1
       fail-fast: false
       matrix:
         include:
