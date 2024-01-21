@@ -4,7 +4,7 @@ from logging import getLogger
 
 from dotenv import load_dotenv
 
-from . import __VERSION__ as APP_VERSION
+from . import __version__ as APP_VERSION
 from .app_config import load_app_config_from_env
 from .subcommand.subcommand_add_user import add_arguments_subcommand_add_user
 from .subcommand.subcommand_disable_user import add_arguments_subcommand_disable_user
