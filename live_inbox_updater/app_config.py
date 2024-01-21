@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from . import __VERSION__ as APP_VERSION
+from . import __version__ as APP_VERSION
 from .storage_type import StorageType, validate_storage_type_string
 
 
