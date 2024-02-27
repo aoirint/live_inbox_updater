@@ -45,7 +45,7 @@ RUN <<EOF
 EOF
 
 WORKDIR /code/live_inbox_updater
-ADD ./pyproject.toml ./poetry.lock /code/live_inbox_updater/
+ADD --chown="${CONTAINER_UID}:${CONTAINER_GID}" ./pyproject.toml ./poetry.lock /code/live_inbox_updater/
 
 RUN --mount=type=cache,uid="${CONTAINER_UID}",gid="${CONTAINER_GID}",target=/home/user/.cache/pypoetry/cache \
     --mount=type=cache,uid="${CONTAINER_UID}",gid="${CONTAINER_GID}",target=/home/user/.cache/pypoetry/artifacts <<EOF
@@ -54,9 +54,9 @@ RUN --mount=type=cache,uid="${CONTAINER_UID}",gid="${CONTAINER_GID}",target=/hom
     gosu user poetry install --no-root --only main
 EOF
 
-ADD ./README.md /code/live_inbox_updater/
-ADD ./live_inbox_updater /code/live_inbox_updater/live_inbox_updater
-ADD ./scripts /code/live_inbox_updater/scripts
+ADD --chown="${CONTAINER_UID}:${CONTAINER_GID}" ./README.md /code/live_inbox_updater/
+ADD --chown="${CONTAINER_UID}:${CONTAINER_GID}" ./live_inbox_updater /code/live_inbox_updater/live_inbox_updater
+ADD --chown="${CONTAINER_UID}:${CONTAINER_GID}" ./scripts /code/live_inbox_updater/scripts
 
 RUN --mount=type=cache,uid="${CONTAINER_UID}",gid="${CONTAINER_GID}",target=/home/user/.cache/pypoetry/cache \
     --mount=type=cache,uid="${CONTAINER_UID}",gid="${CONTAINER_GID}",target=/home/user/.cache/pypoetry/artifacts <<EOF
