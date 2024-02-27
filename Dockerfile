@@ -18,11 +18,13 @@ RUN <<EOF
     rm -rf /var/lib/apt/lists/*
 EOF
 
+ARG CONTAINER_UID=1000
+ARG CONTAINER_GID=1000
 RUN <<EOF
     set -eu
 
-    groupadd -o -g 1000 user
-    useradd -m -o -u 1000 -g user user
+    groupadd --non-unique --gid "${CONTAINER_GID}" user
+    useradd --non-unique --uid "${CONTAINER_UID}" --gid "${CONTAINER_GID}" --create-home user
 EOF
 
 ARG POETRY_VERSION=1.8.1
@@ -30,26 +32,38 @@ RUN <<EOF
     set -eu
 
     gosu user pip install "poetry==${POETRY_VERSION}"
+
+    mkdir -p /home/user/.cache/pypoetry/{cache,artifacts}
+    chown -R "${CONTAINER_UID}:${CONTAINER_GID}" /home/user/.cache
 EOF
 
 RUN <<EOF
     set -eu
 
     mkdir -p /code/live_inbox_updater
-    chown -R user:user /code
+    chown -R "${CONTAINER_UID}:${CONTAINER_GID}" /code/live_inbox_updater
 EOF
 
 WORKDIR /code/live_inbox_updater
 ADD ./pyproject.toml ./poetry.lock /code/live_inbox_updater/
 
-RUN <<EOF
+RUN --mount=type=cache,uid="${CONTAINER_UID}",gid="${CONTAINER_GID}",target=/home/user/.cache/pypoetry/cache \
+    --mount=type=cache,uid="${CONTAINER_UID}",gid="${CONTAINER_GID}",target=/home/user/.cache/pypoetry/artifacts <<EOF
     set -eu
 
-    gosu user poetry install --no-cache --only main
+    gosu user poetry install --no-root --only main
 EOF
 
+ADD ./README.md /code/live_inbox_updater/
 ADD ./live_inbox_updater /code/live_inbox_updater/live_inbox_updater
 ADD ./scripts /code/live_inbox_updater/scripts
+
+RUN --mount=type=cache,uid="${CONTAINER_UID}",gid="${CONTAINER_GID}",target=/home/user/.cache/pypoetry/cache \
+    --mount=type=cache,uid="${CONTAINER_UID}",gid="${CONTAINER_GID}",target=/home/user/.cache/pypoetry/artifacts <<EOF
+    set -eu
+
+    gosu user poetry install --only main
+EOF
 
 ENTRYPOINT [ "gosu", "user", "poetry", "run", "python", "-m", "live_inbox_updater" ]
 CMD [ "update" ]
