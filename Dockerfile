@@ -33,6 +33,8 @@ RUN <<EOF
 
     gosu user pip install "poetry==${POETRY_VERSION}"
 
+    gosu user poetry config virtualenvs.in-project true
+
     mkdir -p /home/user/.cache/pypoetry/{cache,artifacts}
     chown -R "${CONTAINER_UID}:${CONTAINER_GID}" /home/user/.cache
 EOF
