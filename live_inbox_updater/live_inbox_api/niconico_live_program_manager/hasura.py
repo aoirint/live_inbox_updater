@@ -18,7 +18,9 @@ class UpsertNiconicoLiveProgramsResponseInsertNiconicoLivePrograms(BaseModel):
 
 
 class UpsertNiconicoLiveProgramsResponseData(BaseModel):
-    insert_niconico_live_programs: UpsertNiconicoLiveProgramsResponseInsertNiconicoLivePrograms
+    insert_niconico_live_programs: (
+        UpsertNiconicoLiveProgramsResponseInsertNiconicoLivePrograms
+    )
 
 
 class UpsertNiconicoLiveProgramsResponseBody(BaseModel):

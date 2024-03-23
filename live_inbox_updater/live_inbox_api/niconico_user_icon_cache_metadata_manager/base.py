@@ -19,8 +19,7 @@ class LiveInboxApiNiconicoUserIconCacheMetadataManager(ABC):
     def get_by_urls(
         self,
         urls: Iterable[str],
-    ) -> list[LiveInboxApiNiconicoUserIconCacheMetadata]:
-        ...
+    ) -> list[LiveInboxApiNiconicoUserIconCacheMetadata]: ...
 
     @abstractmethod
     def save(
@@ -31,5 +30,4 @@ class LiveInboxApiNiconicoUserIconCacheMetadataManager(ABC):
         hash_md5: str,
         content_type: str,
         file_key: str,
-    ) -> None:
-        ...
+    ) -> None: ...

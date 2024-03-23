@@ -15,5 +15,4 @@ class NiconicoApiNiconicoUserClient(ABC):
     def get_all(
         self,
         remote_niconico_user_ids: Iterable[str],
-    ) -> Iterable[NiconicoApiNiconicoUser]:
-        ...
+    ) -> Iterable[NiconicoApiNiconicoUser]: ...
