@@ -14,5 +14,4 @@ class NiconicoApiNiconicoUserIconClient(ABC):
     def get(
         self,
         url: str,
-    ) -> NiconicoApiNiconicoUserIcon:
-        ...
+    ) -> NiconicoApiNiconicoUserIcon: ...

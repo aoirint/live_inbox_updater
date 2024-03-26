@@ -20,5 +20,4 @@ class LiveInboxApiNiconicoLiveProgramManager(ABC):
     def upsert_all(
         self,
         upsert_objects: Iterable[LiveInboxApiNiconicoLiveProgramUpsertObject],
-    ) -> None:
-        ...
+    ) -> None: ...

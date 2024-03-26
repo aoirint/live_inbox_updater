@@ -27,19 +27,16 @@ class LiveInboxApiNiconicoUserManager(ABC):
     @abstractmethod
     def get_all(
         self,
-    ) -> list[LiveInboxApiNiconicoUser]:
-        ...
+    ) -> list[LiveInboxApiNiconicoUser]: ...
 
     @abstractmethod
     def create_users(
         self,
         create_objects: Iterable[LiveInboxApiNiconicoUserCreateObject],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @abstractmethod
     def bulk_update_user_enabled(
         self,
         update_objects: Iterable[LiveInboxApiNiconicoUserEnabledUpdateObject],
-    ) -> None:
-        ...
+    ) -> None: ...

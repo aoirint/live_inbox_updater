@@ -7,8 +7,7 @@ class LiveInboxApiNiconicoUserIconCacheStorageManager(ABC):
         self,
         file_key: str,
         content_type: str,
-    ) -> bool:
-        ...
+    ) -> bool: ...
 
     @abstractmethod
     def save(
@@ -16,5 +15,4 @@ class LiveInboxApiNiconicoUserIconCacheStorageManager(ABC):
         file_key: str,
         content_type: str,
         content: bytes,
-    ) -> None:
-        ...
+    ) -> None: ...

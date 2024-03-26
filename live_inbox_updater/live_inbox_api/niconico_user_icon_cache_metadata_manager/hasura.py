@@ -29,9 +29,9 @@ class GetNiconicoUserIconCacheByUrlsResponseNiconicoUserIconCache(BaseModel):
 
 
 class GetNiconicoUserIconCacheByUrlsResponseData(BaseModel):
-    niconico_user_icon_caches: (
-        list[GetNiconicoUserIconCacheByUrlsResponseNiconicoUserIconCache]
-    )
+    niconico_user_icon_caches: list[
+        GetNiconicoUserIconCacheByUrlsResponseNiconicoUserIconCache
+    ]
 
 
 class GetNiconicoUserIconCacheByUrlsResponseBody(BaseModel):

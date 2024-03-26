@@ -21,5 +21,4 @@ class NiconicoApiNiconicoUserBroadcastHistoryClient(ABC):
         niconico_user_id: str,
         offset: int = 0,
         limit: int = 10,
-    ) -> list[NiconicoApiNiconicoUserBroadcastProgram]:
-        ...
+    ) -> list[NiconicoApiNiconicoUserBroadcastProgram]: ...
